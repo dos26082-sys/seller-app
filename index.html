@@ -54,6 +54,61 @@ body::before {
 
 body > * { position: relative; z-index: 1; }
 
+/* SPLASH */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+.splash.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: splashPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes splashPulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.15); }
+}
+
+.splash-loading {
+  position: absolute;
+  bottom: 60px;
+  left: 0; right: 0;
+  text-align: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #58a6ff;
+  text-transform: uppercase;
+  text-shadow: 0 0 12px rgba(88,166,255,0.6);
+}
+
+.splash-loading::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: #58a6ff;
+  box-shadow: 0 0 10px #58a6ff;
+  animation: blink 1s ease-in-out infinite;
+}
+
 /* HEADER */
 .header {
   background: rgba(13,17,23,0.92);
@@ -294,6 +349,28 @@ body > * { position: relative; z-index: 1; }
 
 .bsm-red { background: rgba(248,81,73,0.1); color: #f85149; border-color: rgba(248,81,73,0.2); }
 .bsm-green { background: rgba(63,185,80,0.1); color: var(--green); border-color: rgba(63,185,80,0.2); }
+.bsm-cb { background: rgba(227,179,65,0.1); color: var(--yellow); border-color: rgba(227,179,65,0.2); }
+
+/* SETTINGS ICON BUTTON */
+.salary-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.btn-icon-sm {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text2);
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-icon-sm:active { transform: scale(0.93); }
+.btn-icon-sm:hover { color: var(--accent); border-color: rgba(88,166,255,0.25); }
 
 /* CLIENT CARD */
 .client-card {
@@ -359,6 +436,7 @@ body > * { position: relative; z-index: 1; }
 
 /* PAYMENTS */
 .payments-block { border-top: 1px solid var(--border2); padding: 10px 14px 12px 16px; }
+.payments-block + .payments-block { border-top: 1px solid var(--border2); }
 
 .payments-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .payments-title { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.3px; }
@@ -370,6 +448,13 @@ body > * { position: relative; z-index: 1; }
   border: 1px solid rgba(63,185,80,0.12);
   border-radius: 8px; margin-bottom: 5px;
 }
+
+.payment-row.cb-row {
+  background: rgba(227,179,65,0.06);
+  border: 1px solid rgba(227,179,65,0.12);
+}
+
+.pay-amount.cb-amount { color: var(--yellow); }
 
 .pay-amount {
   font-family: 'Space Grotesk', sans-serif;
@@ -450,6 +535,11 @@ body > * { position: relative; z-index: 1; }
 </style>
 </head>
 <body>
+
+<div class="splash" id="splash">
+  <img src="splash.jpg" alt="SKOLL">
+  <div class="splash-loading">Loading</div>
+</div>
 
 <div class="header">
   <div class="header-inner">
@@ -535,14 +625,8 @@ body > * { position: relative; z-index: 1; }
 </div>
 
 <div id="tab-salary" class="section">
-  <div class="card">
-    <div class="card-head"><div class="card-label">Курс конвертации</div></div>
-    <div class="card-body">
-      <div class="form-group" style="margin:0">
-        <label>Грн за каждые 100 000 ₽</label>
-        <input type="number" id="rate" value="2850" inputmode="numeric" oninput="calcSalary()">
-      </div>
-    </div>
+  <div class="salary-toolbar">
+    <button class="btn-icon-sm" onclick="openRateModal()" title="Настройки курса">⚙️</button>
   </div>
   <div class="card">
     <div class="card-body" id="salary-result"></div>
@@ -552,7 +636,7 @@ body > * { position: relative; z-index: 1; }
 <div class="modal-overlay" id="payment-modal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">Новый платёж</div>
+    <div class="modal-title" id="payment-modal-title">Новый платёж</div>
     <div class="form-group">
       <label>Сумма (₽)</label>
       <input type="number" id="pm-sum" placeholder="50 000" inputmode="numeric">
@@ -568,11 +652,31 @@ body > * { position: relative; z-index: 1; }
   </div>
 </div>
 
+<div class="modal-overlay" id="rate-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Настройка курса</div>
+    <div class="form-group" style="margin:0 0 14px">
+      <label>Грн за каждые 100 000 ₽</label>
+      <input type="number" id="rate" value="2850" inputmode="numeric">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveRate()">Сохранить</button>
+      <button class="btn btn-muted" onclick="closeRateModal()">Отмена</button>
+    </div>
+  </div>
+</div>
+
 <script>
 if (window.Telegram && window.Telegram.WebApp) {
   window.Telegram.WebApp.ready();
   window.Telegram.WebApp.expand();
 }
+
+setTimeout(function() {
+  const splash = document.getElementById('splash');
+  if (splash) splash.classList.add('hide');
+}, 1800);
 
 let clients = JSON.parse(localStorage.getItem('crm_v6') || '[]');
 let weekStart = localStorage.getItem('crm_week_start');
@@ -581,6 +685,8 @@ if (!weekStart) {
   localStorage.setItem('crm_week_start', weekStart);
 }
 weekStart = parseInt(weekStart);
+
+let conversionRate = parseFloat(localStorage.getItem('crm_rate')) || 2850;
 
 let activePaymentClientId = null;
 
@@ -622,10 +728,14 @@ function deleteClient(id) {
   save(); renderClients();
 }
 
-function openPaymentModal(clientId) {
+let activePaymentType = 'payments';
+
+function openPaymentModal(clientId, type) {
   activePaymentClientId = clientId;
+  activePaymentType = type || 'payments';
   document.getElementById('pm-sum').value = '';
   document.getElementById('pm-note').value = '';
+  document.getElementById('payment-modal-title').textContent = activePaymentType === 'cb' ? 'Новый платёж с ЦБ' : 'Новый платёж';
   document.getElementById('payment-modal').classList.add('open');
   setTimeout(() => document.getElementById('pm-sum').focus(), 150);
 }
@@ -640,8 +750,9 @@ function savePayment() {
   if (!sum) { alert('Введите сумму'); return; }
   const client = clients.find(c => c.id === activePaymentClientId);
   if (!client) return;
-  if (!client.payments) client.payments = [];
-  client.payments.push({
+  const key = activePaymentType === 'cb' ? 'cbPayments' : 'payments';
+  if (!client[key]) client[key] = [];
+  client[key].push({
     id: Date.now(),
     sum,
     note: document.getElementById('pm-note').value.trim(),
@@ -650,15 +761,18 @@ function savePayment() {
   save(); closeModal(); renderClients();
 }
 
-function deletePayment(clientId, paymentId) {
+function deletePayment(clientId, paymentId, type) {
   const client = clients.find(c => c.id === clientId);
   if (!client) return;
-  client.payments = client.payments.filter(p => p.id !== paymentId);
+  const key = type === 'cb' ? 'cbPayments' : 'payments';
+  client[key] = client[key].filter(p => p.id !== paymentId);
   save(); renderClients();
 }
 
 function totalPayments(client) {
-  return (client.payments || []).reduce((a, p) => a + p.sum, 0);
+  const a = (client.payments || []).reduce((a, p) => a + p.sum, 0);
+  const b = (client.cbPayments || []).reduce((a, p) => a + p.sum, 0);
+  return a + b;
 }
 
 function renderClients() {
@@ -670,6 +784,7 @@ function renderClients() {
   el.innerHTML = clients.map((c, i) => {
     const total = totalPayments(c);
     const payments = c.payments || [];
+    const cbPayments = c.cbPayments || [];
     const dateStr = c.createdAt ? new Date(c.createdAt).toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'}) : '';
     return `
       <div class="client-card">
@@ -700,7 +815,7 @@ function renderClients() {
         <div class="payments-block">
           <div class="payments-head">
             <div class="payments-title">Платежи${payments.length ? ` (${payments.length})` : ''}</div>
-            <button class="btn-sm bsm-green" onclick="openPaymentModal(${c.id})">+ Добавить</button>
+            <button class="btn-sm bsm-green" onclick="openPaymentModal(${c.id}, 'payments')">+ Добавить</button>
           </div>
           ${payments.length ? `
             ${payments.map(p => `
@@ -711,15 +826,36 @@ function renderClients() {
                 </div>
                 <div class="pay-right">
                   <div class="pay-date">${p.date}</div>
-                  <button class="btn-sm bsm-red" style="padding:3px 8px;font-size:11px" onclick="deletePayment(${c.id},${p.id})">✕</button>
+                  <button class="btn-sm bsm-red" style="padding:3px 8px;font-size:11px" onclick="deletePayment(${c.id},${p.id},'payments')">✕</button>
                 </div>
               </div>
             `).join('')}
-            <div class="total-row">
-              <span class="total-label">ИТОГО</span>
-              <span class="total-val">${total.toLocaleString('ru-RU')} ₽</span>
-            </div>
           ` : `<div class="no-payments">Платежей нет</div>`}
+        </div>
+
+        <div class="payments-block">
+          <div class="payments-head">
+            <div class="payments-title">Платежи с ЦБ${cbPayments.length ? ` (${cbPayments.length})` : ''}</div>
+            <button class="btn-sm bsm-cb" onclick="openPaymentModal(${c.id}, 'cb')">+ Добавить</button>
+          </div>
+          ${cbPayments.length ? `
+            ${cbPayments.map(p => `
+              <div class="payment-row cb-row">
+                <div>
+                  <div class="pay-amount cb-amount">+${p.sum.toLocaleString('ru-RU')} ₽</div>
+                  ${p.note ? `<div class="pay-note">${p.note}</div>` : ''}
+                </div>
+                <div class="pay-right">
+                  <div class="pay-date">${p.date}</div>
+                  <button class="btn-sm bsm-red" style="padding:3px 8px;font-size:11px" onclick="deletePayment(${c.id},${p.id},'cb')">✕</button>
+                </div>
+              </div>
+            `).join('')}
+          ` : `<div class="no-payments">Платежей с ЦБ нет</div>`}
+          <div class="total-row">
+            <span class="total-label">ИТОГО ПО КЛИЕНТУ</span>
+            <span class="total-val">${total.toLocaleString('ru-RU')} ₽</span>
+          </div>
         </div>
       </div>
     `;
@@ -769,8 +905,25 @@ function renderStats() {
   renderStatGroup('stats-total', countInRange(0), 'всего');
 }
 
+function openRateModal() {
+  document.getElementById('rate').value = conversionRate;
+  document.getElementById('rate-modal').classList.add('open');
+}
+
+function closeRateModal() {
+  document.getElementById('rate-modal').classList.remove('open');
+}
+
+function saveRate() {
+  const val = parseFloat(document.getElementById('rate').value);
+  conversionRate = isNaN(val) ? 0 : val;
+  localStorage.setItem('crm_rate', conversionRate);
+  closeRateModal();
+  calcSalary();
+}
+
 function calcSalary() {
-  const rate = parseFloat(document.getElementById('rate').value) || 0;
+  const rate = conversionRate;
   const totalSum = clients.reduce((a,c) => a + totalPayments(c), 0);
   const salary = Math.round((totalSum / 100000) * rate);
 
@@ -799,6 +952,10 @@ function calcSalary() {
 
 document.getElementById('payment-modal').addEventListener('click', function(e) {
   if(e.target === this) closeModal();
+});
+
+document.getElementById('rate-modal').addEventListener('click', function(e) {
+  if(e.target === this) closeRateModal();
 });
 
 renderClients();
