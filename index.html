@@ -3,475 +3,805 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Seller CRM</title>
+<title>CRM</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
-  :root {
-    --bg: #f2f2f7;
-    --card: #ffffff;
-    --text: #000000;
-    --text2: #6d6d72;
-    --accent: #007aff;
-    --danger: #ff3b30;
-    --success: #34c759;
-    --border: #e0e0e0;
-    --badge1-bg: #ddeeff;
-    --badge1-text: #0055aa;
-    --badge2-bg: #ddf5e7;
-    --badge2-text: #1a7a3a;
-  }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 80px;
-  }
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #1c2128;
+  --card: #161b22;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.04);
+  --accent: #58a6ff;
+  --accent2: #1f6feb;
+  --green: #3fb950;
+  --green2: #238636;
+  --purple: #bc8cff;
+  --pink: #f778ba;
+  --yellow: #e3b341;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #484f58;
+  --shadow: 0 1px 0 rgba(255,255,255,0.04);
+  --glow-blue: 0 0 20px rgba(88,166,255,0.15);
+}
 
-  .tabs {
-    display: flex;
-    background: var(--card);
-    border-bottom: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 90px;
+  -webkit-font-smoothing: antialiased;
+}
 
-  .tab {
-    flex: 1;
-    padding: 12px 4px;
-    text-align: center;
-    font-size: 12px;
-    color: var(--text2);
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    font-family: inherit;
-  }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(88,166,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(88,166,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
 
-  .tab.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-    font-weight: 500;
-  }
+body > * { position: relative; z-index: 1; }
 
-  .section { display: none; padding: 12px; }
-  .section.active { display: block; }
+/* HEADER */
+.header {
+  background: rgba(13,17,23,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
 
-  .card {
-    background: var(--card);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 12px;
-  }
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .card-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text2);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
-  }
+.logo { display: flex; align-items: center; gap: 10px; }
 
-  .form-group {
-    margin-bottom: 12px;
-  }
+.logo-mark {
+  width: 30px; height: 30px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  box-shadow: var(--glow-blue);
+}
 
-  .form-group label {
-    display: block;
-    font-size: 12px;
-    color: var(--text2);
-    margin-bottom: 4px;
-  }
+.logo-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.3px;
+}
 
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-size: 15px;
-    font-family: inherit;
-    background: var(--bg);
-    color: var(--text);
-    outline: none;
-  }
+.logo-sub {
+  font-size: 10px; color: var(--text3); letter-spacing: 1.5px;
+  text-transform: uppercase; margin-top: 1px;
+}
 
-  .form-group input:focus,
-  .form-group textarea:focus {
-    border-color: var(--accent);
-  }
+.status-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(63,185,80,0.1);
+  border: 1px solid rgba(63,185,80,0.2);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 11px; font-weight: 600; color: var(--green); letter-spacing: 0.5px;
+}
 
-  .form-group textarea {
-    min-height: 70px;
-    resize: vertical;
-  }
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+  animation: blink 2s ease-in-out infinite;
+}
 
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+@keyframes blink {
+  0%,100% { opacity:1; box-shadow: 0 0 6px var(--green); }
+  50% { opacity:0.4; box-shadow: none; }
+}
 
-  .btn {
-    width: 100%;
-    padding: 14px;
-    border-radius: 12px;
-    border: none;
-    font-size: 16px;
-    font-weight: 500;
-    font-family: inherit;
-    cursor: pointer;
-  }
+/* TABS */
+.tabs {
+  display: flex;
+  background: rgba(13,17,23,0.9);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 59px; z-index: 99;
+  padding: 0 8px;
+}
 
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-  }
+.tab {
+  flex: 1; padding: 11px 4px; text-align: center;
+  font-size: 12px; font-weight: 500; color: var(--text3);
+  border: none; background: transparent; cursor: pointer;
+  border-bottom: 2px solid transparent;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s; letter-spacing: 0.2px;
+}
 
-  .btn-danger-sm {
-    background: transparent;
-    color: var(--danger);
-    border: 1px solid var(--danger);
-    padding: 5px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-family: inherit;
-    cursor: pointer;
-  }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 
-  .client-item {
-    border-bottom: 1px solid var(--border);
-    padding: 12px 0;
-  }
+.section { display: none; padding: 14px; }
+.section.active { display: block; }
 
-  .client-item:last-child { border-bottom: none; }
+/* CARD */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
 
-  .client-name {
-    font-size: 15px;
-    font-weight: 500;
-    margin-bottom: 4px;
-  }
+.card-head {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: space-between;
+}
 
-  .client-meta {
-    font-size: 13px;
-    color: var(--text2);
-    margin-bottom: 6px;
-  }
+.card-label {
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1px;
+}
 
-  .client-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
+.card-body { padding: 14px; }
 
-  .badges {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-  }
+/* WEEK BANNER */
+.week-banner {
+  background: linear-gradient(135deg, rgba(88,166,255,0.08), rgba(188,140,255,0.08));
+  border: 1px solid rgba(88,166,255,0.15);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .badge {
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-  }
+.week-info-label {
+  font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;
+}
 
-  .badge-1 { background: var(--badge1-bg); color: var(--badge1-text); }
-  .badge-2 { background: var(--badge2-bg); color: var(--badge2-text); }
+.week-info-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px; font-weight: 600; color: var(--text);
+}
 
-  .client-sum {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--accent);
-  }
+.btn-week-reset {
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(88,166,255,0.25);
+  background: rgba(88,166,255,0.08);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
 
-  .client-comment {
-    font-size: 13px;
-    color: var(--text2);
-    margin-top: 4px;
-    font-style: italic;
-  }
+/* STAT GRID */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
 
-  .stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
 
-  .stat-card {
-    background: var(--card);
-    border-radius: 12px;
-    padding: 14px;
-  }
+.stat-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  border-radius: 12px 12px 0 0;
+}
 
-  .stat-label {
-    font-size: 12px;
-    color: var(--text2);
-    margin-bottom: 4px;
-  }
+.sc1::after { background: linear-gradient(90deg, var(--accent), var(--purple)); }
+.sc2::after { background: linear-gradient(90deg, var(--green), #56d364); }
+.sc3::after { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+.sc4::after { background: linear-gradient(90deg, var(--yellow), var(--pink)); }
 
-  .stat-value {
-    font-size: 22px;
-    font-weight: 600;
-  }
+.stat-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px; font-weight: 700; color: var(--text);
+  letter-spacing: -0.5px; line-height: 1; margin-bottom: 4px;
+}
 
-  .stat-sub {
-    font-size: 11px;
-    color: var(--text2);
-    margin-top: 2px;
-  }
+.stat-lbl { font-size: 12px; color: var(--text2); font-weight: 500; }
+.stat-period { font-size: 10px; color: var(--text3); margin-top: 2px; letter-spacing: 0.5px; }
 
-  .manager-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-  }
+/* FORM */
+.form-group { margin-bottom: 12px; }
 
-  .manager-row:last-child { border-bottom: none; }
+.form-group label {
+  display: block; font-size: 12px; font-weight: 500; color: var(--text2);
+  margin-bottom: 6px; letter-spacing: 0.2px;
+}
 
-  .salary-big {
-    font-size: 36px;
-    font-weight: 700;
-    color: var(--success);
-    margin: 8px 0 4px;
-  }
+.form-group input, .form-group textarea {
+  width: 100%; padding: 10px 13px;
+  border: 1px solid var(--border); border-radius: 8px;
+  font-size: 14px; font-family: 'Inter', sans-serif;
+  background: var(--bg3); color: var(--text);
+  outline: none; transition: all 0.15s; -webkit-appearance: none;
+}
 
-  .salary-sub {
-    font-size: 13px;
-    color: var(--text2);
-  }
+.form-group input:focus, .form-group textarea:focus {
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(31,111,235,0.15);
+  background: var(--bg2);
+}
 
-  .empty {
-    text-align: center;
-    padding: 32px 16px;
-    color: var(--text2);
-    font-size: 15px;
-  }
+.form-group input::placeholder, .form-group textarea::placeholder { color: var(--text3); }
+.form-group textarea { min-height: 70px; resize: vertical; line-height: 1.5; }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1c1c1e;
-      --card: #2c2c2e;
-      --text: #ffffff;
-      --text2: #8e8e93;
-      --border: #3a3a3c;
-      --badge1-bg: #0a2a4a;
-      --badge1-text: #5ac8fa;
-      --badge2-bg: #0a2e1a;
-      --badge2-text: #30d158;
-    }
-  }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* BUTTONS */
+.btn {
+  display: block; width: 100%; padding: 12px;
+  border-radius: 8px; border: none;
+  font-size: 14px; font-weight: 600;
+  font-family: 'Inter', sans-serif; cursor: pointer;
+  transition: all 0.15s; letter-spacing: 0.2px;
+}
+
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--accent2); color: #fff;
+  border: 1px solid rgba(88,166,255,0.3);
+  box-shadow: 0 0 20px rgba(31,111,235,0.25);
+}
+.btn-primary:hover { background: #388bfd; }
+
+.btn-green-solid {
+  background: var(--green2); color: #fff;
+  border: 1px solid rgba(63,185,80,0.3);
+  box-shadow: 0 0 20px rgba(35,134,54,0.25);
+}
+
+.btn-muted {
+  background: var(--bg3); color: var(--text2);
+  border: 1px solid var(--border);
+}
+
+.btn-sm {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 11px; border-radius: 6px;
+  font-size: 12px; font-weight: 600;
+  font-family: 'Inter', sans-serif; cursor: pointer;
+  border: 1px solid; transition: all 0.15s;
+}
+
+.bsm-red { background: rgba(248,81,73,0.1); color: #f85149; border-color: rgba(248,81,73,0.2); }
+.bsm-green { background: rgba(63,185,80,0.1); color: var(--green); border-color: rgba(63,185,80,0.2); }
+
+/* CLIENT CARD */
+.client-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.client-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--purple));
+  opacity: 0.7;
+}
+
+.client-top {
+  padding: 12px 14px 10px 16px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+
+.client-num {
+  font-size: 10px; font-weight: 600; color: var(--text3);
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px;
+}
+
+.client-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.2px;
+}
+
+.client-meta { padding: 0 14px 10px 16px; display: flex; flex-wrap: wrap; gap: 10px; }
+
+.meta-item { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text2); }
+.meta-icon { font-size: 12px; }
+
+.badges { padding: 0 14px 10px 16px; display: flex; gap: 6px; flex-wrap: wrap; }
+
+.badge {
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; border: 1px solid;
+}
+
+.b1 { background: rgba(88,166,255,0.1); color: var(--accent); border-color: rgba(88,166,255,0.2); }
+.b2 { background: rgba(188,140,255,0.1); color: var(--purple); border-color: rgba(188,140,255,0.2); }
+
+.comment-box {
+  margin: 0 14px 10px 16px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border2);
+  border-left: 2px solid var(--text3);
+  border-radius: 0 6px 6px 0;
+  font-size: 13px; color: var(--text2); line-height: 1.5;
+}
+
+.client-date {
+  padding: 0 14px 10px 16px;
+  font-size: 11px; color: var(--text3); letter-spacing: 0.3px;
+}
+
+/* PAYMENTS */
+.payments-block { border-top: 1px solid var(--border2); padding: 10px 14px 12px 16px; }
+
+.payments-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.payments-title { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.3px; }
+
+.payment-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 10px;
+  background: rgba(63,185,80,0.06);
+  border: 1px solid rgba(63,185,80,0.12);
+  border-radius: 8px; margin-bottom: 5px;
+}
+
+.pay-amount {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px; font-weight: 700; color: var(--green); letter-spacing: -0.3px;
+}
+
+.pay-note { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.pay-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.pay-date { font-size: 11px; color: var(--text3); font-weight: 500; }
+
+.total-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border2);
+}
+
+.total-label { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.3px; }
+
+.total-val {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px; font-weight: 700; color: var(--text);
+}
+
+.no-payments { font-size: 12px; color: var(--text3); padding: 4px 0; }
+
+/* SALARY */
+.salary-center { text-align: center; padding: 18px 0 10px; }
+
+.salary-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 48px; font-weight: 700; color: var(--green);
+  letter-spacing: -1px; line-height: 1;
+  text-shadow: 0 0 40px rgba(63,185,80,0.3);
+}
+
+.salary-cur { font-size: 14px; color: var(--text2); font-weight: 500; margin-top: 4px; letter-spacing: 0.5px; }
+
+.info-table { margin-top: 14px; border-top: 1px solid var(--border2); padding-top: 10px; }
+
+.info-row {
+  display: flex; justify-content: space-between; padding: 8px 0;
+  border-bottom: 1px solid var(--border2); font-size: 13px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row-label { color: var(--text2); }
+.info-row-val { font-weight: 600; color: var(--text); }
+
+/* MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+  z-index: 200; align-items: flex-end;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  padding: 16px 18px 28px; width: 100%;
+}
+
+.modal-handle { width: 32px; height: 3px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+
+.modal-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 16px; font-weight: 700; color: var(--text);
+  margin-bottom: 14px; letter-spacing: -0.2px;
+}
+
+.btn-row { display: flex; gap: 8px; margin-top: 4px; }
+.btn-row .btn { flex: 1; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 50px 20px; color: var(--text3); }
+.empty-icon { font-size: 36px; margin-bottom: 10px; }
+.empty-t { font-size: 15px; font-weight: 600; color: var(--text2); margin-bottom: 4px; }
+.empty-s { font-size: 13px; color: var(--text3); }
 </style>
 </head>
 <body>
 
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">⚡</div>
+      <div>
+        <div class="logo-text">Sales CRM</div>
+        <div class="logo-sub">Management System</div>
+      </div>
+    </div>
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      LIVE
+    </div>
+  </div>
+</div>
+
 <div class="tabs">
-  <button class="tab active" onclick="showTab('clients')">📋 Клиенты</button>
-  <button class="tab" onclick="showTab('add')">➕ Добавить</button>
-  <button class="tab" onclick="showTab('stats')">📊 Статистика</button>
-  <button class="tab" onclick="showTab('salary')">💰 Зарплата</button>
+  <button class="tab active" onclick="showTab('clients')">Клиенты</button>
+  <button class="tab" onclick="showTab('add')">Добавить</button>
+  <button class="tab" onclick="showTab('stats')">Статистика</button>
+  <button class="tab" onclick="showTab('salary')">Зарплата</button>
 </div>
 
 <div id="tab-clients" class="section active">
-  <div class="card">
-    <div id="clients-list"></div>
-  </div>
+  <div id="clients-list"></div>
 </div>
 
 <div id="tab-add" class="section">
   <div class="card">
-    <div class="card-title">Новый клиент</div>
-    <div class="form-group">
-      <label>ФИО</label>
-      <input type="text" id="f-name" placeholder="Иванов Иван Иванович">
-    </div>
-    <div class="form-row">
+    <div class="card-head"><div class="card-label">Новый клиент</div></div>
+    <div class="card-body">
       <div class="form-group">
-        <label>Телефон</label>
-        <input type="tel" id="f-phone" placeholder="+7 999 000 00 00">
+        <label>ФИО</label>
+        <input type="text" id="f-name" placeholder="Иванов Иван Иванович">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Телефон</label>
+          <input type="tel" id="f-phone" placeholder="+7 999 000 00 00">
+        </div>
+        <div class="form-group">
+          <label>Регион</label>
+          <input type="text" id="f-region" placeholder="Москва">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Этап 1 — менеджер</label>
+          <input type="text" id="f-m1" placeholder="Имя">
+        </div>
+        <div class="form-group">
+          <label>Этап 2 — менеджер</label>
+          <input type="text" id="f-m2" placeholder="Имя">
+        </div>
       </div>
       <div class="form-group">
-        <label>Регион</label>
-        <input type="text" id="f-region" placeholder="Москва">
+        <label>Комментарий</label>
+        <textarea id="f-comment" placeholder="Детали сделки..."></textarea>
       </div>
+      <button class="btn btn-primary" onclick="addClient()">Добавить клиента</button>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Кто вёл этап 1</label>
-        <input type="text" id="f-m1" placeholder="Имя">
-      </div>
-      <div class="form-group">
-        <label>Кто вёл этап 2</label>
-        <input type="text" id="f-m2" placeholder="Имя">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Сумма сделки (₽)</label>
-      <input type="number" id="f-sum" placeholder="100000" inputmode="numeric">
-    </div>
-    <div class="form-group">
-      <label>Комментарий (как забрал)</label>
-      <textarea id="f-comment" placeholder="Свободный текст..."></textarea>
-    </div>
-    <button class="btn btn-primary" onclick="addClient()">Добавить клиента</button>
   </div>
 </div>
 
 <div id="tab-stats" class="section">
-  <div class="stat-grid" id="stats-grid"></div>
-  <div class="card">
-    <div class="card-title">Этап 1</div>
-    <div id="managers-1"></div>
+  <div class="week-banner">
+    <div>
+      <div class="week-info-label">Текущая неделя</div>
+      <div class="week-info-val" id="week-range">—</div>
+    </div>
+    <button class="btn-week-reset" onclick="startNewWeek()">Новая неделя</button>
   </div>
-  <div class="card">
-    <div class="card-title">Этап 2</div>
-    <div id="managers-2"></div>
-  </div>
+
+  <div class="card-label" style="margin-bottom:8px;padding-left:2px">За эту неделю</div>
+  <div class="stat-grid" id="stats-week"></div>
+
+  <div class="card-label" style="margin:14px 0 8px;padding-left:2px">За этот месяц</div>
+  <div class="stat-grid" id="stats-month"></div>
+
+  <div class="card-label" style="margin:14px 0 8px;padding-left:2px">Всего</div>
+  <div class="stat-grid" id="stats-total"></div>
 </div>
 
 <div id="tab-salary" class="section">
   <div class="card">
-    <div class="card-title">Курс пересчёта</div>
-    <div class="form-group">
-      <label>Грн за каждые 100 000 ₽</label>
-      <input type="number" id="rate" value="2850" inputmode="numeric" oninput="calcSalary()">
+    <div class="card-head"><div class="card-label">Курс конвертации</div></div>
+    <div class="card-body">
+      <div class="form-group" style="margin:0">
+        <label>Грн за каждые 100 000 ₽</label>
+        <input type="number" id="rate" value="2850" inputmode="numeric" oninput="calcSalary()">
+      </div>
     </div>
   </div>
-  <div class="card" id="salary-result"></div>
+  <div class="card">
+    <div class="card-body" id="salary-result"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="payment-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Новый платёж</div>
+    <div class="form-group">
+      <label>Сумма (₽)</label>
+      <input type="number" id="pm-sum" placeholder="50 000" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label>Комментарий</label>
+      <input type="text" id="pm-note" placeholder="Аванс, финал...">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-green-solid" onclick="savePayment()">Добавить</button>
+      <button class="btn btn-muted" onclick="closeModal()">Отмена</button>
+    </div>
+  </div>
 </div>
 
 <script>
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.ready();
-    window.Telegram.WebApp.expand();
+if (window.Telegram && window.Telegram.WebApp) {
+  window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.expand();
+}
+
+let clients = JSON.parse(localStorage.getItem('crm_v6') || '[]');
+let weekStart = localStorage.getItem('crm_week_start');
+if (!weekStart) {
+  weekStart = Date.now();
+  localStorage.setItem('crm_week_start', weekStart);
+}
+weekStart = parseInt(weekStart);
+
+let activePaymentClientId = null;
+
+function save() { localStorage.setItem('crm_v6', JSON.stringify(clients)); }
+
+function showTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const names = ['clients','add','stats','salary'];
+  document.querySelectorAll('.tab')[names.indexOf(name)].classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'stats') renderStats();
+  if (name === 'salary') calcSalary();
+  if (name === 'clients') renderClients();
+}
+
+function addClient() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('Введите ФИО'); return; }
+  clients.unshift({
+    id: Date.now(),
+    createdAt: Date.now(),
+    name,
+    phone: document.getElementById('f-phone').value.trim(),
+    region: document.getElementById('f-region').value.trim(),
+    m1: document.getElementById('f-m1').value.trim(),
+    m2: document.getElementById('f-m2').value.trim(),
+    comment: document.getElementById('f-comment').value.trim(),
+    payments: []
+  });
+  save();
+  ['f-name','f-phone','f-region','f-m1','f-m2','f-comment'].forEach(id => document.getElementById(id).value = '');
+  showTab('clients');
+}
+
+function deleteClient(id) {
+  if (!confirm('Удалить клиента?')) return;
+  clients = clients.filter(c => c.id !== id);
+  save(); renderClients();
+}
+
+function openPaymentModal(clientId) {
+  activePaymentClientId = clientId;
+  document.getElementById('pm-sum').value = '';
+  document.getElementById('pm-note').value = '';
+  document.getElementById('payment-modal').classList.add('open');
+  setTimeout(() => document.getElementById('pm-sum').focus(), 150);
+}
+
+function closeModal() {
+  document.getElementById('payment-modal').classList.remove('open');
+  activePaymentClientId = null;
+}
+
+function savePayment() {
+  const sum = parseFloat(document.getElementById('pm-sum').value);
+  if (!sum) { alert('Введите сумму'); return; }
+  const client = clients.find(c => c.id === activePaymentClientId);
+  if (!client) return;
+  if (!client.payments) client.payments = [];
+  client.payments.push({
+    id: Date.now(),
+    sum,
+    note: document.getElementById('pm-note').value.trim(),
+    date: new Date().toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'2-digit'})
+  });
+  save(); closeModal(); renderClients();
+}
+
+function deletePayment(clientId, paymentId) {
+  const client = clients.find(c => c.id === clientId);
+  if (!client) return;
+  client.payments = client.payments.filter(p => p.id !== paymentId);
+  save(); renderClients();
+}
+
+function totalPayments(client) {
+  return (client.payments || []).reduce((a, p) => a + p.sum, 0);
+}
+
+function renderClients() {
+  const el = document.getElementById('clients-list');
+  if (!clients.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div class="empty-t">Клиентов пока нет</div><div class="empty-s">Нажмите «Добавить» чтобы начать</div></div>`;
+    return;
   }
-
-  let clients = JSON.parse(localStorage.getItem('crm_v1') || '[]');
-
-  function save() {
-    localStorage.setItem('crm_v1', JSON.stringify(clients));
-  }
-
-  function showTab(name) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    const names = ['clients','add','stats','salary'];
-    document.querySelectorAll('.tab')[names.indexOf(name)].classList.add('active');
-    document.getElementById('tab-' + name).classList.add('active');
-    if (name === 'stats') renderStats();
-    if (name === 'salary') calcSalary();
-    if (name === 'clients') renderClients();
-  }
-
-  function addClient() {
-    const name = document.getElementById('f-name').value.trim();
-    if (!name) { alert('Введите ФИО'); return; }
-    clients.unshift({
-      id: Date.now(),
-      name,
-      phone: document.getElementById('f-phone').value.trim(),
-      region: document.getElementById('f-region').value.trim(),
-      m1: document.getElementById('f-m1').value.trim(),
-      m2: document.getElementById('f-m2').value.trim(),
-      sum: parseFloat(document.getElementById('f-sum').value) || 0,
-      comment: document.getElementById('f-comment').value.trim()
-    });
-    save();
-    ['f-name','f-phone','f-region','f-m1','f-m2','f-sum','f-comment'].forEach(id => document.getElementById(id).value = '');
-    showTab('clients');
-  }
-
-  function deleteClient(id) {
-    if (!confirm('Удалить клиента?')) return;
-    clients = clients.filter(c => c.id !== id);
-    save();
-    renderClients();
-  }
-
-  function renderClients() {
-    const el = document.getElementById('clients-list');
-    if (!clients.length) {
-      el.innerHTML = '<div class="empty">Клиентов пока нет</div>';
-      return;
-    }
-    el.innerHTML = clients.map(c => `
-      <div class="client-item">
-        <div class="client-row">
-          <div class="client-name">${c.name}</div>
-          <button class="btn-danger-sm" onclick="deleteClient(${c.id})">Удалить</button>
+  el.innerHTML = clients.map((c, i) => {
+    const total = totalPayments(c);
+    const payments = c.payments || [];
+    const dateStr = c.createdAt ? new Date(c.createdAt).toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+    return `
+      <div class="client-card">
+        <div class="client-top">
+          <div>
+            <div class="client-num">CLIENT · #${String(clients.length - i).padStart(3,'0')}</div>
+            <div class="client-name">${c.name}</div>
+          </div>
+          <button class="btn-sm bsm-red" onclick="deleteClient(${c.id})">✕ Удалить</button>
         </div>
-        <div class="client-meta">${[c.phone, c.region].filter(Boolean).join(' · ') || '—'}</div>
+
+        ${(c.phone || c.region) ? `
+        <div class="client-meta">
+          ${c.phone ? `<div class="meta-item"><span class="meta-icon">📞</span>${c.phone}</div>` : ''}
+          ${c.region ? `<div class="meta-item"><span class="meta-icon">📍</span>${c.region}</div>` : ''}
+        </div>` : ''}
+
+        ${(c.m1 || c.m2) ? `
         <div class="badges">
-          ${c.m1 ? '<span class="badge badge-1">Э1: ' + c.m1 + '</span>' : ''}
-          ${c.m2 ? '<span class="badge badge-2">Э2: ' + c.m2 + '</span>' : ''}
+          ${c.m1 ? `<span class="badge b1">Этап 1 · ${c.m1}</span>` : ''}
+          ${c.m2 ? `<span class="badge b2">Этап 2 · ${c.m2}</span>` : ''}
+        </div>` : ''}
+
+        ${c.comment ? `<div class="comment-box">${c.comment}</div>` : ''}
+
+        ${dateStr ? `<div class="client-date">Добавлен: ${dateStr}</div>` : ''}
+
+        <div class="payments-block">
+          <div class="payments-head">
+            <div class="payments-title">Платежи${payments.length ? ` (${payments.length})` : ''}</div>
+            <button class="btn-sm bsm-green" onclick="openPaymentModal(${c.id})">+ Добавить</button>
+          </div>
+          ${payments.length ? `
+            ${payments.map(p => `
+              <div class="payment-row">
+                <div>
+                  <div class="pay-amount">+${p.sum.toLocaleString('ru-RU')} ₽</div>
+                  ${p.note ? `<div class="pay-note">${p.note}</div>` : ''}
+                </div>
+                <div class="pay-right">
+                  <div class="pay-date">${p.date}</div>
+                  <button class="btn-sm bsm-red" style="padding:3px 8px;font-size:11px" onclick="deletePayment(${c.id},${p.id})">✕</button>
+                </div>
+              </div>
+            `).join('')}
+            <div class="total-row">
+              <span class="total-label">ИТОГО</span>
+              <span class="total-val">${total.toLocaleString('ru-RU')} ₽</span>
+            </div>
+          ` : `<div class="no-payments">Платежей нет</div>`}
         </div>
-        ${c.sum ? '<div class="client-sum">' + c.sum.toLocaleString('ru-RU') + ' ₽</div>' : ''}
-        ${c.comment ? '<div class="client-comment">' + c.comment + '</div>' : ''}
       </div>
-    `).join('');
-  }
-
-  function renderStats() {
-    const total = clients.length;
-    const totalSum = clients.reduce((a, c) => a + (c.sum || 0), 0);
-    const withM1 = clients.filter(c => c.m1).length;
-    const withM2 = clients.filter(c => c.m2).length;
-
-    document.getElementById('stats-grid').innerHTML = `
-      <div class="stat-card"><div class="stat-label">Клиентов</div><div class="stat-value">${total}</div></div>
-      <div class="stat-card"><div class="stat-label">Сумма сделок</div><div class="stat-value">${(totalSum/1000).toFixed(0)}K</div><div class="stat-sub">рублей</div></div>
-      <div class="stat-card"><div class="stat-label">Закрыто этап 1</div><div class="stat-value">${withM1}</div></div>
-      <div class="stat-card"><div class="stat-label">Закрыто этап 2</div><div class="stat-value">${withM2}</div></div>
     `;
+  }).join('');
+}
 
-    const m1 = {}, m2 = {};
-    clients.forEach(c => {
-      if (c.m1) m1[c.m1] = (m1[c.m1] || 0) + 1;
-      if (c.m2) m2[c.m2] = (m2[c.m2] || 0) + 1;
-    });
+function startNewWeek() {
+  if (!confirm('Начать новую неделю? Текущая статистика недели будет сброшена (клиенты останутся в списке).')) return;
+  weekStart = Date.now();
+  localStorage.setItem('crm_week_start', weekStart);
+  renderStats();
+}
 
-    const renderManagers = (obj, badgeClass) => {
-      const entries = Object.entries(obj).sort((a,b) => b[1]-a[1]);
-      if (!entries.length) return '<div class="empty" style="padding:12px">Нет данных</div>';
-      return entries.map(([n,c]) => `
-        <div class="manager-row">
-          <span>${n}</span>
-          <span class="badge ${badgeClass}">${c} кл.</span>
-        </div>
-      `).join('');
-    };
+function countInRange(fromTs) {
+  const inRange = clients.filter(c => (c.createdAt || 0) >= fromTs);
+  return {
+    total: inRange.length,
+    m1: inRange.filter(c => c.m1).length,
+    m2: inRange.filter(c => c.m2).length
+  };
+}
 
-    document.getElementById('managers-1').innerHTML = renderManagers(m1, 'badge-1');
-    document.getElementById('managers-2').innerHTML = renderManagers(m2, 'badge-2');
-  }
+function renderStatGroup(elId, data, periodLabel) {
+  document.getElementById(elId).innerHTML = `
+    <div class="stat-card sc1" style="grid-column: span 2">
+      <div class="stat-num">${data.total}</div>
+      <div class="stat-lbl">Клиентов</div>
+      <div class="stat-period">${periodLabel}</div>
+    </div>
+  `;
+}
 
-  function calcSalary() {
-    const rate = parseFloat(document.getElementById('rate').value) || 0;
-    const totalSum = clients.reduce((a, c) => a + (c.sum || 0), 0);
-    const salary = Math.round((totalSum / 100000) * rate);
-    document.getElementById('salary-result').innerHTML = `
-      <div class="stat-label">Общая сумма сделок</div>
-      <div style="font-size:18px;font-weight:600;margin-bottom:12px">${totalSum.toLocaleString('ru-RU')} ₽</div>
-      <div class="stat-label">Моя зарплата</div>
-      <div class="salary-big">${salary.toLocaleString('ru-RU')} ₴</div>
-      <div class="salary-sub">при курсе ${rate.toLocaleString('ru-RU')} грн / 100 000 ₽</div>
-    `;
-  }
+function renderStats() {
+  // week range label
+  const startD = new Date(weekStart);
+  const now = new Date();
+  const fmt = d => d.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit'});
+  document.getElementById('week-range').textContent = `${fmt(startD)} — ${fmt(now)}`;
 
-  renderClients();
+  // month start
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0,0,0,0);
+
+  renderStatGroup('stats-week', countInRange(weekStart), 'за неделю');
+  renderStatGroup('stats-month', countInRange(monthStart.getTime()), 'за месяц');
+  renderStatGroup('stats-total', countInRange(0), 'всего');
+}
+
+function calcSalary() {
+  const rate = parseFloat(document.getElementById('rate').value) || 0;
+  const totalSum = clients.reduce((a,c) => a + totalPayments(c), 0);
+  const salary = Math.round((totalSum / 100000) * rate);
+
+  document.getElementById('salary-result').innerHTML = `
+    <div class="salary-center">
+      <div style="font-size:12px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Зарплата</div>
+      <div class="salary-num">${salary.toLocaleString('ru-RU')}</div>
+      <div class="salary-cur">гривен ₴</div>
+    </div>
+    <div class="info-table">
+      <div class="info-row">
+        <span class="info-row-label">Сумма сделок</span>
+        <span class="info-row-val">${totalSum.toLocaleString('ru-RU')} ₽</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-label">Курс</span>
+        <span class="info-row-val">${rate.toLocaleString('ru-RU')} грн / 100К ₽</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-label">Клиентов</span>
+        <span class="info-row-val">${clients.length}</span>
+      </div>
+    </div>
+  `;
+}
+
+document.getElementById('payment-modal').addEventListener('click', function(e) {
+  if(e.target === this) closeModal();
+});
+
+renderClients();
 </script>
 </body>
 </html>
