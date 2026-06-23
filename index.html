@@ -354,7 +354,8 @@ body > * { position: relative; z-index: 1; }
 /* SETTINGS ICON BUTTON */
 .salary-toolbar {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 10px;
 }
 
@@ -372,14 +373,144 @@ body > * { position: relative; z-index: 1; }
 .btn-icon-sm:active { transform: scale(0.93); }
 .btn-icon-sm:hover { color: var(--accent); border-color: rgba(88,166,255,0.25); }
 
+/* EXPORT BUTTON */
+.btn-export {
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(88,166,255,0.25);
+  background: rgba(88,166,255,0.08);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+
+/* SEARCH BAR */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 13px;
+  margin-bottom: 10px;
+}
+
+.search-icon { font-size: 14px; flex-shrink: 0; }
+
+.search-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+}
+
+.search-bar input::placeholder { color: var(--text3); }
+
+/* STATUS PICKER */
+.status-picker {
+  display: flex;
+  gap: 6px;
+}
+
+.status-opt {
+  flex: 1;
+  padding: 8px 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text2);
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.status-opt.active {
+  border-color: var(--accent2);
+  background: rgba(31,111,235,0.12);
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* STATUS BADGE ON CARD */
+.status-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.sb-work { background: rgba(88,166,255,0.12); color: var(--accent); border: 1px solid rgba(88,166,255,0.2); }
+.sb-done { background: rgba(63,185,80,0.12); color: var(--green); border: 1px solid rgba(63,185,80,0.2); }
+.sb-fail { background: rgba(248,81,73,0.12); color: #f85149; border: 1px solid rgba(248,81,73,0.2); }
+
+/* AUTOCOMPLETE SUGGESTIONS */
+.suggestions {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0; right: 0;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  z-index: 50;
+  overflow: hidden;
+  display: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.suggestions.visible { display: block; }
+
+.suggestion-item {
+  padding: 9px 13px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border2);
+}
+
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:active { background: rgba(255,255,255,0.05); }
+
+/* WEEK HISTORY */
+.week-history-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-bottom: 7px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wh-left {}
+.wh-period { font-size: 11px; color: var(--text3); letter-spacing: 0.5px; margin-bottom: 2px; }
+.wh-clients { font-size: 13px; font-weight: 600; color: var(--text); }
+.wh-sum { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--green); }
+.empty-history { font-size: 13px; color: var(--text3); text-align: center; padding: 12px 0; }
+
 /* CLIENT CARD */
 .client-card {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   overflow: hidden;
   position: relative;
+  transition: border-color 0.2s;
+}
+
+.client-card.is-open {
+  border-color: rgba(88,166,255,0.25);
 }
 
 .client-card::before {
@@ -390,8 +521,43 @@ body > * { position: relative; z-index: 1; }
 }
 
 .client-top {
-  padding: 12px 14px 10px 16px;
-  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 12px 14px 12px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.client-top-left { flex: 1; }
+.client-top-right { flex-shrink: 0; margin-left: 10px; }
+
+.client-preview {
+  font-size: 13px;
+  color: var(--green);
+  font-weight: 600;
+  margin-top: 3px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.chevron {
+  color: var(--text3);
+  transition: transform 0.25s ease;
+  display: flex; align-items: center;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.client-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+.client-body.open {
+  max-height: 2000px;
 }
 
 .client-num {
@@ -558,13 +724,17 @@ body > * { position: relative; z-index: 1; }
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="showTab('clients')">Клиенты</button>
+  <button class="tab active" id="tab-btn-clients" onclick="showTab('clients')">Клиенты</button>
   <button class="tab" onclick="showTab('add')">Добавить</button>
   <button class="tab" onclick="showTab('stats')">Статистика</button>
   <button class="tab" onclick="showTab('salary')">Зарплата</button>
 </div>
 
 <div id="tab-clients" class="section active">
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search-input" placeholder="Поиск по имени или телефону..." oninput="renderClients()">
+  </div>
   <div id="clients-list"></div>
 </div>
 
@@ -589,11 +759,21 @@ body > * { position: relative; z-index: 1; }
       <div class="form-row">
         <div class="form-group">
           <label>Этап 1 — менеджер</label>
-          <input type="text" id="f-m1" placeholder="Имя">
+          <input type="text" id="f-m1" placeholder="Имя" autocomplete="off" oninput="showSuggestions('f-m1','sug-m1')" onfocus="showSuggestions('f-m1','sug-m1')" onblur="hideSuggestions('sug-m1')">
+          <div class="suggestions" id="sug-m1"></div>
         </div>
         <div class="form-group">
           <label>Этап 2 — менеджер</label>
-          <input type="text" id="f-m2" placeholder="Имя">
+          <input type="text" id="f-m2" placeholder="Имя" autocomplete="off" oninput="showSuggestions('f-m2','sug-m2')" onfocus="showSuggestions('f-m2','sug-m2')" onblur="hideSuggestions('sug-m2')">
+          <div class="suggestions" id="sug-m2"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Статус</label>
+        <div class="status-picker" id="status-picker">
+          <button type="button" class="status-opt active" data-status="work" onclick="pickStatus(this)">🔵 В работе</button>
+          <button type="button" class="status-opt" data-status="done" onclick="pickStatus(this)">🟢 Закрыт</button>
+          <button type="button" class="status-opt" data-status="fail" onclick="pickStatus(this)">🔴 Отказ</button>
         </div>
       </div>
       <div class="form-group">
@@ -622,11 +802,14 @@ body > * { position: relative; z-index: 1; }
 
   <div class="card-label" style="margin:14px 0 8px;padding-left:2px">Всего</div>
   <div class="stat-grid" id="stats-total"></div>
+  <div class="card-label" style="margin:14px 0 8px;padding-left:2px">История недель</div>
+  <div id="stats-history"></div>
 </div>
 
 <div id="tab-salary" class="section">
   <div class="salary-toolbar">
     <button class="btn-icon-sm" onclick="openRateModal()" title="Настройки курса">⚙️</button>
+    <button class="btn-export" onclick="exportData()">📤 Экспорт</button>
   </div>
   <div class="card">
     <div class="card-body" id="salary-result"></div>
@@ -639,7 +822,7 @@ body > * { position: relative; z-index: 1; }
     <div class="modal-title" id="payment-modal-title">Новый платёж</div>
     <div class="form-group">
       <label>Сумма (₽)</label>
-      <input type="number" id="pm-sum" placeholder="50 000" inputmode="numeric">
+      <input type="text" id="pm-sum" placeholder="50 000" inputmode="numeric" oninput="formatNumberInput(this)">
     </div>
     <div class="form-group">
       <label>Комментарий</label>
@@ -658,7 +841,7 @@ body > * { position: relative; z-index: 1; }
     <div class="modal-title">Настройка курса</div>
     <div class="form-group" style="margin:0 0 14px">
       <label>Грн за каждые 100 000 ₽</label>
-      <input type="number" id="rate" value="2850" inputmode="numeric">
+      <input type="text" id="rate" value="2 850" inputmode="numeric" oninput="formatNumberInput(this)">
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="saveRate()">Сохранить</button>
@@ -687,8 +870,105 @@ if (!weekStart) {
 weekStart = parseInt(weekStart);
 
 let conversionRate = parseFloat(localStorage.getItem('crm_rate')) || 2850;
+let weekHistory = JSON.parse(localStorage.getItem('crm_week_history') || '[]');
 
 let activePaymentClientId = null;
+let expandedCards = new Set();
+let selectedStatus = 'work';
+
+// STATUS
+const STATUS_MAP = {
+  work: { label: '🔵 В работе', cls: 'sb-work' },
+  done: { label: '🟢 Закрыт',  cls: 'sb-done' },
+  fail: { label: '🔴 Отказ',   cls: 'sb-fail' }
+};
+
+function pickStatus(btn) {
+  document.querySelectorAll('.status-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedStatus = btn.dataset.status;
+}
+
+// AUTOCOMPLETE
+function getManagerNames() {
+  const names = new Set();
+  clients.forEach(c => {
+    if (c.m1) names.add(c.m1);
+    if (c.m2) names.add(c.m2);
+  });
+  return [...names];
+}
+
+function showSuggestions(inputId, sugId) {
+  const input = document.getElementById(inputId);
+  const sug = document.getElementById(sugId);
+  const val = input.value.trim().toLowerCase();
+  const names = getManagerNames().filter(n => n.toLowerCase().includes(val) && n !== input.value);
+  if (!names.length || !val) { sug.classList.remove('visible'); sug.innerHTML = ''; return; }
+  sug.innerHTML = names.slice(0, 4).map(n =>
+    `<div class="suggestion-item" onmousedown="pickSuggestion('${inputId}','${sugId}','${n}')">${n}</div>`
+  ).join('');
+  sug.classList.add('visible');
+}
+
+function hideSuggestions(sugId) {
+  setTimeout(() => {
+    const el = document.getElementById(sugId);
+    if (el) { el.classList.remove('visible'); el.innerHTML = ''; }
+  }, 150);
+}
+
+function pickSuggestion(inputId, sugId, name) {
+  document.getElementById(inputId).value = name;
+  hideSuggestions(sugId);
+}
+
+// HAPTIC
+function haptic(style) {
+  try {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+      window.Telegram.WebApp.HapticFeedback.impactOccurred(style || 'light');
+    }
+  } catch(e) {}
+}
+
+// EXPORT
+function exportData() {
+  const data = { clients, weekStart, conversionRate, weekHistory, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'crm-backup-' + new Date().toLocaleDateString('ru-RU').replace(/\./g,'-') + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  haptic('medium');
+}
+
+function toggleCard(id) {
+  if (expandedCards.has(id)) {
+    expandedCards.delete(id);
+  } else {
+    expandedCards.add(id);
+    haptic('light');
+  }
+  renderClients();
+}
+
+function formatNumber(num) {
+  if (num === null || num === undefined || num === '') return '';
+  return Number(num).toLocaleString('ru-RU').replace(/,/g, ' ');
+}
+
+function formatNumberInput(input) {
+  const cursorFromEnd = input.value.length - input.selectionStart;
+  const digits = input.value.replace(/\D/g, '');
+  if (!digits) { input.value = ''; return; }
+  const formatted = formatNumber(parseInt(digits, 10));
+  input.value = formatted;
+  const pos = Math.max(formatted.length - cursorFromEnd, 0);
+  input.setSelectionRange(pos, pos);
+}
 
 function save() { localStorage.setItem('crm_v6', JSON.stringify(clients)); }
 
@@ -715,17 +995,24 @@ function addClient() {
     m1: document.getElementById('f-m1').value.trim(),
     m2: document.getElementById('f-m2').value.trim(),
     comment: document.getElementById('f-comment').value.trim(),
-    payments: []
+    status: selectedStatus,
+    payments: [],
+    cbPayments: []
   });
   save();
+  haptic('medium');
   ['f-name','f-phone','f-region','f-m1','f-m2','f-comment'].forEach(id => document.getElementById(id).value = '');
+  selectedStatus = 'work';
+  document.querySelectorAll('.status-opt').forEach(b => b.classList.toggle('active', b.dataset.status === 'work'));
+  updateTabCounter();
   showTab('clients');
 }
 
 function deleteClient(id) {
   if (!confirm('Удалить клиента?')) return;
   clients = clients.filter(c => c.id !== id);
-  save(); renderClients();
+  expandedCards.delete(id);
+  save(); updateTabCounter(); renderClients();
 }
 
 let activePaymentType = 'payments';
@@ -746,7 +1033,7 @@ function closeModal() {
 }
 
 function savePayment() {
-  const sum = parseFloat(document.getElementById('pm-sum').value);
+  const sum = parseFloat(document.getElementById('pm-sum').value.replace(/\s/g, ''));
   if (!sum) { alert('Введите сумму'); return; }
   const client = clients.find(c => c.id === activePaymentClientId);
   if (!client) return;
@@ -758,7 +1045,7 @@ function savePayment() {
     note: document.getElementById('pm-note').value.trim(),
     date: new Date().toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'2-digit'})
   });
-  save(); closeModal(); renderClients();
+  save(); haptic('light'); closeModal(); renderClients();
 }
 
 function deletePayment(clientId, paymentId, type) {
@@ -777,84 +1064,112 @@ function totalPayments(client) {
 
 function renderClients() {
   const el = document.getElementById('clients-list');
-  if (!clients.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div class="empty-t">Клиентов пока нет</div><div class="empty-s">Нажмите «Добавить» чтобы начать</div></div>`;
+  const query = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+  let filtered = clients;
+  if (query) {
+    filtered = clients.filter(c =>
+      c.name.toLowerCase().includes(query) ||
+      (c.phone || '').toLowerCase().includes(query) ||
+      (c.region || '').toLowerCase().includes(query)
+    );
+  }
+  if (!filtered.length) {
+    el.innerHTML = query
+      ? `<div class="empty"><div class="empty-icon">🔍</div><div class="empty-t">Ничего не найдено</div><div class="empty-s">Попробуйте другой запрос</div></div>`
+      : `<div class="empty"><div class="empty-icon">👤</div><div class="empty-t">Клиентов пока нет</div><div class="empty-s">Нажмите «Добавить» чтобы начать</div></div>`;
     return;
   }
-  el.innerHTML = clients.map((c, i) => {
+  el.innerHTML = filtered.map((c, i) => {
     const total = totalPayments(c);
     const payments = c.payments || [];
     const cbPayments = c.cbPayments || [];
     const dateStr = c.createdAt ? new Date(c.createdAt).toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+    const isOpen = expandedCards.has(c.id);
+    const status = STATUS_MAP[c.status || 'work'];
+    const globalIdx = clients.indexOf(c);
     return `
-      <div class="client-card">
-        <div class="client-top">
-          <div>
-            <div class="client-num">CLIENT · #${String(clients.length - i).padStart(3,'0')}</div>
+      <div class="client-card ${isOpen ? 'is-open' : ''}">
+        <div class="client-top" onclick="toggleCard(${c.id})">
+          <div class="client-top-left">
+            <div class="client-num">CLIENT · #${String(clients.length - globalIdx).padStart(3,'0')}</div>
             <div class="client-name">${c.name}</div>
+            ${!isOpen ? `<div style="display:flex;align-items:center;gap:6px;margin-top:4px"><span class="status-badge ${status.cls}">${status.label}</span>${total > 0 ? `<span style="font-size:12px;color:var(--green);font-weight:600">${total.toLocaleString('ru-RU')} ₽</span>` : ''}</div>` : ''}
           </div>
-          <button class="btn-sm bsm-red" onclick="deleteClient(${c.id})">✕ Удалить</button>
+          <div class="client-top-right">
+            <div class="chevron ${isOpen ? 'open' : ''}">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
         </div>
 
-        ${(c.phone || c.region) ? `
-        <div class="client-meta">
-          ${c.phone ? `<div class="meta-item"><span class="meta-icon">📞</span>${c.phone}</div>` : ''}
-          ${c.region ? `<div class="meta-item"><span class="meta-icon">📍</span>${c.region}</div>` : ''}
-        </div>` : ''}
-
-        ${(c.m1 || c.m2) ? `
-        <div class="badges">
-          ${c.m1 ? `<span class="badge b1">Этап 1 · ${c.m1}</span>` : ''}
-          ${c.m2 ? `<span class="badge b2">Этап 2 · ${c.m2}</span>` : ''}
-        </div>` : ''}
-
-        ${c.comment ? `<div class="comment-box">${c.comment}</div>` : ''}
-
-        ${dateStr ? `<div class="client-date">Добавлен: ${dateStr}</div>` : ''}
-
-        <div class="payments-block">
-          <div class="payments-head">
-            <div class="payments-title">Платежи${payments.length ? ` (${payments.length})` : ''}</div>
-            <button class="btn-sm bsm-green" onclick="openPaymentModal(${c.id}, 'payments')">+ Добавить</button>
+        <div class="client-body ${isOpen ? 'open' : ''}">
+          <div style="padding: 4px 14px 8px 16px;">
+            <span class="status-badge ${status.cls}">${status.label}</span>
           </div>
-          ${payments.length ? `
-            ${payments.map(p => `
-              <div class="payment-row">
-                <div>
-                  <div class="pay-amount">+${p.sum.toLocaleString('ru-RU')} ₽</div>
-                  ${p.note ? `<div class="pay-note">${p.note}</div>` : ''}
-                </div>
-                <div class="pay-right">
-                  <div class="pay-date">${p.date}</div>
-                  <button class="btn-sm bsm-red" style="padding:3px 8px;font-size:11px" onclick="deletePayment(${c.id},${p.id},'payments')">✕</button>
-                </div>
-              </div>
-            `).join('')}
-          ` : `<div class="no-payments">Платежей нет</div>`}
-        </div>
 
-        <div class="payments-block">
-          <div class="payments-head">
-            <div class="payments-title">Платежи с ЦБ${cbPayments.length ? ` (${cbPayments.length})` : ''}</div>
-            <button class="btn-sm bsm-cb" onclick="openPaymentModal(${c.id}, 'cb')">+ Добавить</button>
+          ${(c.phone || c.region) ? `
+          <div class="client-meta">
+            ${c.phone ? `<div class="meta-item"><span class="meta-icon">📞</span>${c.phone}</div>` : ''}
+            ${c.region ? `<div class="meta-item"><span class="meta-icon">📍</span>${c.region}</div>` : ''}
+          </div>` : ''}
+
+          ${(c.m1 || c.m2) ? `
+          <div class="badges">
+            ${c.m1 ? `<span class="badge b1">Этап 1 · ${c.m1}</span>` : ''}
+            ${c.m2 ? `<span class="badge b2">Этап 2 · ${c.m2}</span>` : ''}
+          </div>` : ''}
+
+          ${c.comment ? `<div class="comment-box">${c.comment}</div>` : ''}
+          ${dateStr ? `<div class="client-date">Добавлен: ${dateStr}</div>` : ''}
+
+          <div class="payments-block">
+            <div class="payments-head">
+              <div class="payments-title">Платежи${payments.length ? ` (${payments.length})` : ''}</div>
+              <button class="btn-sm bsm-green" onclick="event.stopPropagation(); openPaymentModal(${c.id}, 'payments')">+ Добавить</button>
+            </div>
+            ${payments.length ? `
+              ${payments.map(p => `
+                <div class="payment-row">
+                  <div>
+                    <div class="pay-amount">+${p.sum.toLocaleString('ru-RU')} ₽</div>
+                    ${p.note ? `<div class="pay-note">${p.note}</div>` : ''}
+                  </div>
+                  <div class="pay-right">
+                    <div class="pay-date">${p.date}</div>
+                    <button class="btn-sm bsm-red" style="padding:3px 8px;font-size:11px" onclick="event.stopPropagation(); deletePayment(${c.id},${p.id},'payments')">✕</button>
+                  </div>
+                </div>
+              `).join('')}
+            ` : `<div class="no-payments">Платежей нет</div>`}
           </div>
-          ${cbPayments.length ? `
-            ${cbPayments.map(p => `
-              <div class="payment-row cb-row">
-                <div>
-                  <div class="pay-amount cb-amount">+${p.sum.toLocaleString('ru-RU')} ₽</div>
-                  ${p.note ? `<div class="pay-note">${p.note}</div>` : ''}
+
+          <div class="payments-block">
+            <div class="payments-head">
+              <div class="payments-title">Платежи с ЦБ${cbPayments.length ? ` (${cbPayments.length})` : ''}</div>
+              <button class="btn-sm bsm-cb" onclick="event.stopPropagation(); openPaymentModal(${c.id}, 'cb')">+ Добавить</button>
+            </div>
+            ${cbPayments.length ? `
+              ${cbPayments.map(p => `
+                <div class="payment-row cb-row">
+                  <div>
+                    <div class="pay-amount cb-amount">+${p.sum.toLocaleString('ru-RU')} ₽</div>
+                    ${p.note ? `<div class="pay-note">${p.note}</div>` : ''}
+                  </div>
+                  <div class="pay-right">
+                    <div class="pay-date">${p.date}</div>
+                    <button class="btn-sm bsm-red" style="padding:3px 8px;font-size:11px" onclick="event.stopPropagation(); deletePayment(${c.id},${p.id},'cb')">✕</button>
+                  </div>
                 </div>
-                <div class="pay-right">
-                  <div class="pay-date">${p.date}</div>
-                  <button class="btn-sm bsm-red" style="padding:3px 8px;font-size:11px" onclick="deletePayment(${c.id},${p.id},'cb')">✕</button>
-                </div>
-              </div>
-            `).join('')}
-          ` : `<div class="no-payments">Платежей с ЦБ нет</div>`}
-          <div class="total-row">
-            <span class="total-label">ИТОГО ПО КЛИЕНТУ</span>
-            <span class="total-val">${total.toLocaleString('ru-RU')} ₽</span>
+              `).join('')}
+            ` : `<div class="no-payments">Платежей с ЦБ нет</div>`}
+            <div class="total-row">
+              <span class="total-label">ИТОГО ПО КЛИЕНТУ</span>
+              <span class="total-val">${total.toLocaleString('ru-RU')} ₽</span>
+            </div>
+          </div>
+
+          <div style="padding: 0 14px 12px 16px;">
+            <button class="btn-sm bsm-red" onclick="event.stopPropagation(); deleteClient(${c.id})">✕ Удалить клиента</button>
           </div>
         </div>
       </div>
@@ -862,10 +1177,34 @@ function renderClients() {
   }).join('');
 }
 
+function updateTabCounter() {
+  const btn = document.getElementById('tab-btn-clients');
+  if (btn) btn.textContent = clients.length ? `Клиенты · ${clients.length}` : 'Клиенты';
+}
+
 function startNewWeek() {
-  if (!confirm('Начать новую неделю? Текущая статистика недели будет сброшена (клиенты останутся в списке).')) return;
+  if (!confirm('Начать новую неделю? Текущая статистика будет сохранена в историю.')) return;
+
+  // Save current week to history
+  const weekClients = clients.filter(c => (c.createdAt || 0) >= weekStart);
+  const weekSum = weekClients.reduce((a, c) => a + totalPayments(c), 0);
+  const startD = new Date(weekStart);
+  const endD = new Date();
+  const fmt = d => d.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit'});
+
+  if (weekClients.length > 0) {
+    weekHistory.unshift({
+      period: `${fmt(startD)} — ${fmt(endD)}`,
+      clientCount: weekClients.length,
+      sum: weekSum
+    });
+    if (weekHistory.length > 20) weekHistory = weekHistory.slice(0, 20);
+    localStorage.setItem('crm_week_history', JSON.stringify(weekHistory));
+  }
+
   weekStart = Date.now();
   localStorage.setItem('crm_week_start', weekStart);
+  haptic('medium');
   renderStats();
 }
 
@@ -903,10 +1242,29 @@ function renderStats() {
   renderStatGroup('stats-week', countInRange(weekStart), 'за неделю');
   renderStatGroup('stats-month', countInRange(monthStart.getTime()), 'за месяц');
   renderStatGroup('stats-total', countInRange(0), 'всего');
+  renderWeekHistory();
+}
+
+function renderWeekHistory() {
+  const el = document.getElementById('stats-history');
+  if (!el) return;
+  if (!weekHistory.length) {
+    el.innerHTML = '<div class="empty-history">История недель пока пуста</div>';
+    return;
+  }
+  el.innerHTML = weekHistory.map(w => `
+    <div class="week-history-item">
+      <div class="wh-left">
+        <div class="wh-period">${w.period}</div>
+        <div class="wh-clients">${w.clientCount} ${w.clientCount === 1 ? 'клиент' : w.clientCount < 5 ? 'клиента' : 'клиентов'}</div>
+      </div>
+      <div class="wh-sum">${w.sum.toLocaleString('ru-RU')} ₽</div>
+    </div>
+  `).join('');
 }
 
 function openRateModal() {
-  document.getElementById('rate').value = conversionRate;
+  document.getElementById('rate').value = formatNumber(conversionRate);
   document.getElementById('rate-modal').classList.add('open');
 }
 
@@ -915,7 +1273,7 @@ function closeRateModal() {
 }
 
 function saveRate() {
-  const val = parseFloat(document.getElementById('rate').value);
+  const val = parseFloat(document.getElementById('rate').value.replace(/\s/g, ''));
   conversionRate = isNaN(val) ? 0 : val;
   localStorage.setItem('crm_rate', conversionRate);
   closeRateModal();
@@ -959,6 +1317,7 @@ document.getElementById('rate-modal').addEventListener('click', function(e) {
 });
 
 renderClients();
+updateTabCounter();
 </script>
 </body>
 </html>
