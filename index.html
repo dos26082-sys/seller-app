@@ -881,16 +881,94 @@ setTimeout(function() {
   if (splash) splash.classList.add('hide');
 }, 1800);
 
-let clients = JSON.parse(localStorage.getItem('crm_v6') || '[]');
-let weekStart = localStorage.getItem('crm_week_start');
-if (!weekStart) {
-  weekStart = Date.now();
-  localStorage.setItem('crm_week_start', weekStart);
-}
-weekStart = parseInt(weekStart);
+let clients = [];
+let weekStart = Date.now();
+let conversionRate = 2850;
+let weekHistory = [];
 
-let conversionRate = parseFloat(localStorage.getItem('crm_rate')) || 2850;
-let weekHistory = JSON.parse(localStorage.getItem('crm_week_history') || '[]');
+// ── STORAGE LAYER ──────────────────────────────────────────────
+// Приоритет: Telegram CloudStorage → localStorage (fallback)
+const TG_CS = window.Telegram?.WebApp?.CloudStorage;
+
+function csGet(key) {
+  return new Promise(resolve => {
+    if (TG_CS) {
+      TG_CS.getItem(key, (err, val) => resolve(err || !val ? null : val));
+    } else {
+      resolve(localStorage.getItem(key));
+    }
+  });
+}
+
+function csSet(key, value) {
+  if (TG_CS) {
+    TG_CS.setItem(key, value);
+  }
+  // всегда пишем и в localStorage как резерв
+  try { localStorage.setItem(key, value); } catch(e) {}
+}
+
+// Разбиваем клиентов на чанки по ~800 байт (лимит CloudStorage — 1024 на ключ)
+const CHUNK_SIZE = 800;
+
+function saveClients() {
+  const str = JSON.stringify(clients);
+  const chunks = [];
+  for (let i = 0; i < str.length; i += CHUNK_SIZE) {
+    chunks.push(str.slice(i, i + CHUNK_SIZE));
+  }
+  csSet('crm_chunks', String(chunks.length));
+  chunks.forEach((ch, i) => csSet('crm_c' + i, ch));
+  // чистим старые лишние чанки если их стало меньше
+  for (let i = chunks.length; i < 50; i++) {
+    if (TG_CS) TG_CS.removeItem('crm_c' + i);
+    try { localStorage.removeItem('crm_c' + i); } catch(e) {}
+  }
+}
+
+async function loadClients() {
+  const countStr = await csGet('crm_chunks');
+  if (!countStr) {
+    // попытка загрузить старый формат localStorage
+    const old = localStorage.getItem('crm_v6');
+    return old ? JSON.parse(old) : [];
+  }
+  const count = parseInt(countStr) || 0;
+  const parts = await Promise.all(
+    Array.from({length: count}, (_, i) => csGet('crm_c' + i))
+  );
+  try { return JSON.parse(parts.join('')); } catch(e) { return []; }
+}
+
+function save() {
+  saveClients();
+  csSet('crm_week_start', String(weekStart));
+  csSet('crm_rate', String(conversionRate));
+  csSet('crm_week_history', JSON.stringify(weekHistory));
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+async function initApp() {
+  // показываем спиннер пока грузим
+  document.getElementById('clients-list').innerHTML =
+    '<div class="empty"><div class="empty-icon">⏳</div><div class="empty-t">Загрузка данных...</div></div>';
+
+  clients = await loadClients();
+
+  const ws = await csGet('crm_week_start');
+  weekStart = ws ? parseInt(ws) : Date.now();
+  if (!ws) csSet('crm_week_start', String(weekStart));
+
+  const rate = await csGet('crm_rate');
+  conversionRate = rate ? parseFloat(rate) : 2850;
+
+  const wh = await csGet('crm_week_history');
+  weekHistory = wh ? JSON.parse(wh) : [];
+
+  renderClients();
+  updateTabCounter();
+  fetchUsdRate();
+}
 
 let activePaymentClientId = null;
 let expandedCards = new Set();
@@ -990,7 +1068,7 @@ function formatNumberInput(input) {
   input.setSelectionRange(pos, pos);
 }
 
-function save() { localStorage.setItem('crm_v6', JSON.stringify(clients)); }
+// save() определена выше в STORAGE LAYER
 
 function showTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1228,11 +1306,11 @@ function startNewWeek() {
       sum: weekSum
     });
     if (weekHistory.length > 20) weekHistory = weekHistory.slice(0, 20);
-    localStorage.setItem('crm_week_history', JSON.stringify(weekHistory));
+    csSet('crm_week_history', JSON.stringify(weekHistory));
   }
 
   weekStart = Date.now();
-  localStorage.setItem('crm_week_start', weekStart);
+  csSet('crm_week_start', String(weekStart));
   haptic('medium');
   renderStats();
 }
@@ -1304,7 +1382,7 @@ function closeRateModal() {
 function saveRate() {
   const val = parseFloat(document.getElementById('rate').value.replace(/\s/g, ''));
   conversionRate = isNaN(val) ? 0 : val;
-  localStorage.setItem('crm_rate', conversionRate);
+  csSet('crm_rate', String(conversionRate));
   closeRateModal();
   calcSalary();
 }
@@ -1393,9 +1471,7 @@ document.getElementById('rate-modal').addEventListener('click', function(e) {
   if(e.target === this) closeRateModal();
 });
 
-renderClients();
-updateTabCounter();
-fetchUsdRate();
+initApp();
 </script>
 </body>
 </html>
