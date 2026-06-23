@@ -645,6 +645,26 @@ body > * { position: relative; z-index: 1; }
 
 .no-payments { font-size: 12px; color: var(--text3); padding: 4px 0; }
 
+/* STATUS SWITCH ON CARD */
+.status-switch-btn {
+  padding: 5px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg3);
+  color: var(--text2);
+  transition: all 0.15s;
+}
+.status-switch-btn:active { transform: scale(0.95); }
+.status-switch-btn.ssb-active {
+  background: rgba(88,166,255,0.12);
+  border-color: rgba(88,166,255,0.3);
+  color: var(--text);
+}
+
 /* SALARY */
 .salary-center { text-align: center; padding: 18px 0 10px; }
 
@@ -1015,6 +1035,13 @@ function deleteClient(id) {
   save(); updateTabCounter(); renderClients();
 }
 
+function changeStatus(id, newStatus) {
+  const client = clients.find(c => c.id === id);
+  if (!client) return;
+  client.status = newStatus;
+  save(); haptic('light'); renderClients();
+}
+
 let activePaymentType = 'payments';
 
 function openPaymentModal(clientId, type) {
@@ -1103,8 +1130,10 @@ function renderClients() {
         </div>
 
         <div class="client-body ${isOpen ? 'open' : ''}">
-          <div style="padding: 4px 14px 8px 16px;">
-            <span class="status-badge ${status.cls}">${status.label}</span>
+          <div style="padding: 8px 14px 8px 16px; display:flex; gap:6px; flex-wrap:wrap;">
+            ${Object.entries(STATUS_MAP).map(([key, s]) =>
+              `<button class="status-switch-btn ${(c.status||'work') === key ? 'ssb-active' : ''}" onclick="event.stopPropagation(); changeStatus(${c.id},'${key}')">${s.label}</button>`
+            ).join('')}
           </div>
 
           ${(c.phone || c.region) ? `
@@ -1280,25 +1309,73 @@ function saveRate() {
   calcSalary();
 }
 
-function calcSalary() {
+let usdRate = null;
+
+async function fetchUsdRate() {
+  try {
+    const res = await fetch('https://api.exchangerate-api.com/v4/latest/UAH');
+    const data = await res.json();
+    usdRate = 1 / data.rates.USD;
+  } catch(e) {
+    try {
+      const res2 = await fetch('https://open.er-api.com/v6/latest/UAH');
+      const data2 = await res2.json();
+      usdRate = 1 / data2.rates.USD;
+    } catch(e2) {
+      usdRate = null;
+    }
+  }
+}
+
+async function calcSalary() {
   const rate = conversionRate;
   const totalSum = clients.reduce((a,c) => a + totalPayments(c), 0);
   const salary = Math.round((totalSum / 100000) * rate);
+
+  if (usdRate === null) {
+    document.getElementById('salary-result').innerHTML = `
+      <div class="salary-center">
+        <div style="font-size:12px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Зарплата</div>
+        <div class="salary-num">${salary.toLocaleString('ru-RU')}</div>
+        <div class="salary-cur">гривен ₴</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:8px">Загрузка курса USD...</div>
+      </div>
+      <div class="info-table">
+        <div class="info-row">
+          <span class="info-row-label">Сумма сделок</span>
+          <span class="info-row-val">${totalSum.toLocaleString('ru-RU')} ₽</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row-label">Клиентов</span>
+          <span class="info-row-val">${clients.length}</span>
+        </div>
+      </div>
+    `;
+    await fetchUsdRate();
+    calcSalary();
+    return;
+  }
+
+  const salaryUsd = usdRate ? (salary / usdRate).toFixed(0) : null;
+  const usdDisplay = salaryUsd
+    ? `<div style="margin-top:10px;padding:8px 14px;background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.15);border-radius:10px;display:inline-block">
+        <span style="font-size:11px;color:var(--text3);letter-spacing:0.8px;text-transform:uppercase">≈ в долларах</span><br>
+        <span style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--accent)">$${Number(salaryUsd).toLocaleString('ru-RU')}</span>
+        <span style="font-size:11px;color:var(--text3);margin-left:4px">курс: 1$ = ${usdRate.toFixed(1)} ₴</span>
+       </div>`
+    : '';
 
   document.getElementById('salary-result').innerHTML = `
     <div class="salary-center">
       <div style="font-size:12px;font-weight:600;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Зарплата</div>
       <div class="salary-num">${salary.toLocaleString('ru-RU')}</div>
       <div class="salary-cur">гривен ₴</div>
+      ${usdDisplay}
     </div>
     <div class="info-table">
       <div class="info-row">
         <span class="info-row-label">Сумма сделок</span>
         <span class="info-row-val">${totalSum.toLocaleString('ru-RU')} ₽</span>
-      </div>
-      <div class="info-row">
-        <span class="info-row-label">Курс</span>
-        <span class="info-row-val">${rate.toLocaleString('ru-RU')} грн / 100К ₽</span>
       </div>
       <div class="info-row">
         <span class="info-row-label">Клиентов</span>
@@ -1318,6 +1395,7 @@ document.getElementById('rate-modal').addEventListener('click', function(e) {
 
 renderClients();
 updateTabCounter();
+fetchUsdRate();
 </script>
 </body>
 </html>
