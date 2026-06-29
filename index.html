@@ -1653,7 +1653,8 @@ async function fetchUsdRate() {
 
 async function calcSalary() {
   const rate = conversionRate;
-  const totalSum = clients.reduce((a,c) => a + totalPayments(c), 0);
+  const weekClients = clients.filter(c => (c.createdAt || 0) >= weekStart);
+  const totalSum = weekClients.reduce((a,c) => a + totalPayments(c), 0);
   const salary = Math.round((totalSum / 100000) * rate);
 
   if (usdRate === null && !usdRateChecked) {
@@ -1666,12 +1667,12 @@ async function calcSalary() {
       </div>
       <div class="info-table">
         <div class="info-row">
-          <span class="info-row-label">Сумма сделок</span>
+          <span class="info-row-label">Сумма сделок за неделю</span>
           <span class="info-row-val">${totalSum.toLocaleString('ru-RU')} ₽</span>
         </div>
         <div class="info-row">
-          <span class="info-row-label">Клиентов</span>
-          <span class="info-row-val">${clients.length}</span>
+          <span class="info-row-label">Клиентов за неделю</span>
+          <span class="info-row-val">${weekClients.length}</span>
         </div>
       </div>
     `;
@@ -1699,12 +1700,12 @@ async function calcSalary() {
     </div>
     <div class="info-table">
       <div class="info-row">
-        <span class="info-row-label">Сумма сделок</span>
+        <span class="info-row-label">Сумма сделок за неделю</span>
         <span class="info-row-val">${totalSum.toLocaleString('ru-RU')} ₽</span>
       </div>
       <div class="info-row">
-        <span class="info-row-label">Клиентов</span>
-        <span class="info-row-val">${clients.length}</span>
+        <span class="info-row-label">Клиентов за неделю</span>
+        <span class="info-row-val">${weekClients.length}</span>
       </div>
     </div>
   `;
