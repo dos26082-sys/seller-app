@@ -603,10 +603,16 @@ body > * { position: relative; z-index: 1; }
   font-size: 9px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
 }
 .wh-clients { font-family: 'Exo 2', sans-serif; font-size: 14px; font-weight: 600; color: #fff; }
+.wh-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
 .wh-sum {
   font-family: 'Share Tech Mono', monospace;
-  font-size: 16px; color: var(--green);
-  text-shadow: 0 0 12px rgba(0,255,159,0.5);
+  font-size: 14px; color: var(--green);
+  text-shadow: 0 0 10px rgba(0,255,159,0.4);
+}
+.wh-salary {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 13px; font-weight: 700; color: var(--c);
+  text-shadow: 0 0 8px rgba(0,255,231,0.4);
 }
 .empty-history {
   font-family: 'Share Tech Mono', monospace;
@@ -1544,10 +1550,13 @@ function startNewWeek() {
     const fmt = d => d.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit'});
 
     if (weekClients.length > 0) {
+      const weekSalary = Math.round((weekSum / 100000) * conversionRate);
       weekHistory.unshift({
         period: `${fmt(startD)} — ${fmt(endD)}`,
         clientCount: weekClients.length,
-        sum: weekSum
+        sum: weekSum,
+        rate: conversionRate,
+        salary: weekSalary
       });
       if (weekHistory.length > 20) weekHistory = weekHistory.slice(0, 20);
       csSet('crm_week_history', JSON.stringify(weekHistory));
@@ -1604,15 +1613,21 @@ function renderWeekHistory() {
     el.innerHTML = '<div class="empty-history">История недель пока пуста</div>';
     return;
   }
-  el.innerHTML = weekHistory.map(w => `
+  el.innerHTML = weekHistory.map(w => {
+    const wSalary = (w.salary != null) ? w.salary : Math.round((w.sum / 100000) * conversionRate);
+    return `
     <div class="week-history-item">
       <div class="wh-left">
         <div class="wh-period">${w.period}</div>
         <div class="wh-clients">${w.clientCount} ${w.clientCount === 1 ? 'клиент' : w.clientCount < 5 ? 'клиента' : 'клиентов'}</div>
       </div>
-      <div class="wh-sum">${w.sum.toLocaleString('ru-RU')} ₽</div>
+      <div class="wh-right">
+        <div class="wh-sum">${w.sum.toLocaleString('ru-RU')} ₽</div>
+        <div class="wh-salary">${wSalary.toLocaleString('ru-RU')} ₴</div>
+      </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function openRateModal() {
@@ -1656,6 +1671,9 @@ async function calcSalary() {
   const weekClients = clients.filter(c => (c.createdAt || 0) >= weekStart);
   const totalSum = weekClients.reduce((a,c) => a + totalPayments(c), 0);
   const salary = Math.round((totalSum / 100000) * rate);
+  // прошлые недели считаются по курсу, который был актуален на момент их закрытия
+  const allTimeSalary = weekHistory.reduce((a, w) =>
+    a + (w.salary != null ? w.salary : Math.round((w.sum / 100000) * rate)), 0) + salary;
 
   if (usdRate === null && !usdRateChecked) {
     document.getElementById('salary-result').innerHTML = `
@@ -1673,6 +1691,10 @@ async function calcSalary() {
         <div class="info-row">
           <span class="info-row-label">Клиентов за неделю</span>
           <span class="info-row-val">${weekClients.length}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-row-label">Зарплата за всё время</span>
+          <span class="info-row-val" style="color:var(--c)">${allTimeSalary.toLocaleString('ru-RU')} ₴</span>
         </div>
       </div>
     `;
@@ -1706,6 +1728,10 @@ async function calcSalary() {
       <div class="info-row">
         <span class="info-row-label">Клиентов за неделю</span>
         <span class="info-row-val">${weekClients.length}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-row-label">Зарплата за всё время</span>
+        <span class="info-row-val" style="color:var(--c)">${allTimeSalary.toLocaleString('ru-RU')} ₴</span>
       </div>
     </div>
   `;
