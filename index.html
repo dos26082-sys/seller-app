@@ -619,6 +619,116 @@ body > * { position: relative; z-index: 1; }
 }
 .sb-fail::before { background: #ff8090; box-shadow: 0 0 6px #ff8090; }
 
+.stage-badge {
+  display: inline-flex; align-items: center;
+  padding: 3px 9px; border-radius: 20px;
+  font-family: 'Share Tech Mono', monospace; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.5px;
+  background: rgba(200,160,40,0.1); color: var(--text2);
+  border: 1px solid rgba(200,160,40,0.25);
+}
+
+/* STATUS BREAKDOWN */
+.status-breakdown {
+  background: linear-gradient(160deg, rgba(22,17,4,0.96), rgba(10,8,1,0.98));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 8px 0 4px;
+  box-shadow: 0 4px 20px rgba(160,110,10,0.14), 0 1px 0 rgba(220,180,80,0.06) inset;
+}
+
+.sbd-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 11px;
+}
+.sbd-row:last-child { margin-bottom: 0; }
+
+.sbd-label {
+  display: flex; align-items: center; gap: 7px;
+  width: 84px; flex-shrink: 0;
+  font-family: 'Exo 2', sans-serif; font-size: 12px; font-weight: 600; color: var(--text2);
+}
+
+.sbd-bar-track {
+  flex: 1; height: 7px; border-radius: 4px;
+  background: rgba(255,255,255,0.05);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.sbd-bar {
+  height: 100%; border-radius: 4px;
+  transition: width 0.3s ease;
+}
+.sbd-bar-work { background: linear-gradient(90deg, #2090cc, #60cfff); box-shadow: 0 0 8px rgba(96,207,255,0.5); }
+.sbd-bar-done { background: linear-gradient(90deg, #a87c10, var(--green)); box-shadow: 0 0 8px rgba(212,160,23,0.5); }
+.sbd-bar-fail { background: linear-gradient(90deg, #b82030, #ff4757); box-shadow: 0 0 8px rgba(255,71,87,0.5); }
+
+.sbd-val {
+  width: 64px; flex-shrink: 0; text-align: right;
+  font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 700; color: #fff;
+}
+.sbd-pct { color: var(--text2); font-weight: 600; font-size: 11px; }
+
+.wh-breakdown-wrap { margin: -4px 0 8px; }
+.week-history-item.is-open { border-radius: 10px 10px 0 0; margin-bottom: 0; }
+.wh-breakdown-wrap .status-breakdown { border-radius: 0 0 10px 10px; border-top: none; margin-top: 0; margin-bottom: 8px; }
+
+/* DEAL PROGRESS */
+.deal-progress {
+  margin: 0 16px 12px 18px;
+  background: rgba(220,170,30,0.05);
+  border: 1px solid rgba(220,170,30,0.18);
+  border-radius: 10px;
+  padding: 11px 13px;
+}
+
+.dp-top {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.dp-label {
+  font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2);
+  text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600;
+}
+
+.dp-amount {
+  font-family: 'Rajdhani', sans-serif; font-size: 15px; font-weight: 700; color: #fff;
+}
+.dp-of { font-size: 12px; font-weight: 600; color: var(--text2); }
+
+.dp-bar-track {
+  height: 8px; border-radius: 5px;
+  background: rgba(255,255,255,0.05);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+  margin-bottom: 6px;
+}
+
+.dp-bar {
+  height: 100%; border-radius: 5px;
+  background: linear-gradient(90deg, #a87c10, var(--green));
+  box-shadow: 0 0 8px rgba(212,160,23,0.5);
+  transition: width 0.3s ease;
+}
+.dp-bar-over {
+  background: linear-gradient(90deg, var(--c2), var(--c));
+  box-shadow: 0 0 8px rgba(240,192,64,0.6);
+}
+
+.dp-bottom { display: flex; justify-content: space-between; align-items: center; }
+
+.dp-pct {
+  font-family: 'Share Tech Mono', monospace; font-size: 12px; font-weight: 700; color: var(--green);
+}
+.dp-pct-over { color: var(--c); }
+
+.dp-remaining {
+  font-family: 'Exo 2', sans-serif; font-size: 11px; color: var(--text2); font-weight: 600;
+}
+
 /* SUGGESTIONS */
 .suggestions {
   position: absolute; top: calc(100% + 4px); left: 0; right: 0;
@@ -841,6 +951,10 @@ body > * { position: relative; z-index: 1; }
 .b2 {
   background: rgba(168,85,247,0.1); color: #c084fc; border-color: rgba(168,85,247,0.3);
   text-shadow: 0 0 6px rgba(168,85,247,0.3);
+}
+.b3 {
+  background: rgba(220,170,30,0.1); color: var(--c); border-color: rgba(220,170,30,0.3);
+  text-shadow: 0 0 6px rgba(220,170,30,0.3);
 }
 
 .comment-box {
@@ -1131,16 +1245,29 @@ body > * { position: relative; z-index: 1; }
           <input type="text" id="f-region" placeholder="Москва">
         </div>
       </div>
+      <div class="form-group">
+        <label>Внесён с этапа</label>
+        <div class="status-picker" id="stage-picker">
+          <button type="button" class="status-opt active" data-stage="1" onclick="pickStage(this)">Этап 1</button>
+          <button type="button" class="status-opt" data-stage="2" onclick="pickStage(this)">Этап 2</button>
+          <button type="button" class="status-opt" data-stage="3" onclick="pickStage(this)">Этап 3</button>
+        </div>
+      </div>
       <div class="form-row">
-        <div class="form-group">
+        <div class="form-group" id="wrap-m1">
           <label>Этап 1 — менеджер</label>
           <input type="text" id="f-m1" placeholder="Имя" autocomplete="off" oninput="showSuggestions('f-m1','sug-m1')" onfocus="showSuggestions('f-m1','sug-m1')" onblur="hideSuggestions('sug-m1')">
           <div class="suggestions" id="sug-m1"></div>
         </div>
-        <div class="form-group">
+        <div class="form-group" id="wrap-m2">
           <label>Этап 2 — менеджер</label>
           <input type="text" id="f-m2" placeholder="Имя" autocomplete="off" oninput="showSuggestions('f-m2','sug-m2')" onfocus="showSuggestions('f-m2','sug-m2')" onblur="hideSuggestions('sug-m2')">
           <div class="suggestions" id="sug-m2"></div>
+        </div>
+        <div class="form-group" id="wrap-m3">
+          <label>Этап 3 — менеджер</label>
+          <input type="text" id="f-m3" placeholder="Имя" autocomplete="off" oninput="showSuggestions('f-m3','sug-m3')" onfocus="showSuggestions('f-m3','sug-m3')" onblur="hideSuggestions('sug-m3')">
+          <div class="suggestions" id="sug-m3"></div>
         </div>
       </div>
       <div class="form-group">
@@ -1148,8 +1275,12 @@ body > * { position: relative; z-index: 1; }
         <div class="status-picker" id="status-picker">
           <button type="button" class="status-opt active" data-status="work" onclick="pickStatus(this)"><span class="status-opt-dot dot-work"></span>В работе</button>
           <button type="button" class="status-opt" data-status="done" onclick="pickStatus(this)"><span class="status-opt-dot dot-done"></span>Закрыт</button>
-          <button type="button" class="status-opt" data-status="fail" onclick="pickStatus(this)"><span class="status-opt-dot dot-fail"></span>Отказ</button>
+          <button type="button" class="status-opt" data-status="fail" onclick="pickStatus(this)"><span class="status-opt-dot dot-fail"></span>Срез</button>
         </div>
+      </div>
+      <div class="form-group">
+        <label>Общая сумма сделки (₽)</label>
+        <input type="text" id="f-deal-total" placeholder="Например, 50000" inputmode="numeric">
       </div>
       <div class="form-group">
         <label>Комментарий</label>
@@ -1172,12 +1303,15 @@ body > * { position: relative; z-index: 1; }
 
   <div class="card-label" style="margin-bottom:8px;padding-left:2px">За эту неделю</div>
   <div class="stat-grid" id="stats-week"></div>
+  <div id="stats-week-breakdown"></div>
 
   <div class="card-label" style="margin:14px 0 8px;padding-left:2px">За этот месяц</div>
   <div class="stat-grid" id="stats-month"></div>
 
   <div class="card-label" style="margin:14px 0 8px;padding-left:2px">Всего</div>
   <div class="stat-grid" id="stats-total"></div>
+  <div id="stats-total-breakdown"></div>
+
   <div class="card-label" style="margin:14px 0 8px;padding-left:2px">История недель</div>
   <div id="stats-history"></div>
 </div>
@@ -1365,6 +1499,7 @@ async function initApp() {
 let activePaymentClientId = null;
 let expandedCards = new Set();
 let selectedStatus = 'work';
+let selectedStage = 1;
 
 // STATUS
 const STATUS_MAP = {
@@ -1374,9 +1509,46 @@ const STATUS_MAP = {
 };
 
 function pickStatus(btn) {
-  document.querySelectorAll('.status-opt').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#status-picker .status-opt').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedStatus = btn.dataset.status;
+}
+
+function pickStage(btn) {
+  document.querySelectorAll('#stage-picker .status-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedStage = parseInt(btn.dataset.stage);
+  updateManagerFields();
+}
+
+function updateManagerFields() {
+  // Этап 1 → ты первый, нужно указать кто ведёт этапы 2 и 3
+  // Этап 2 → нужно указать кто вёл этап 1 (и кто ведёт этап 2 — но это ты сам, так что только m1)
+  // Этап 3 → нужно указать кто вёл этапы 1 и 2
+  const m1 = document.getElementById('wrap-m1');
+  const m2 = document.getElementById('wrap-m2');
+  const m3 = document.getElementById('wrap-m3');
+  if (!m1 || !m2 || !m3) return;
+
+  const show = (el, label) => { el.style.display = ''; el.querySelector('label').textContent = label; };
+  const hide = (el) => { el.style.display = 'none'; el.querySelector('input').value = ''; };
+
+  if (selectedStage === 1) {
+    // Ты на этапе 1 — указываем кто ведёт этапы 2 и 3
+    hide(m1);
+    show(m2, 'Этап 2 — менеджер');
+    show(m3, 'Этап 3 — менеджер');
+  } else if (selectedStage === 2) {
+    // Ты на этапе 2 — указываем кто вёл этап 1 и кто ведёт этап 3
+    show(m1, 'Этап 1 — менеджер');
+    hide(m2);
+    show(m3, 'Этап 3 — менеджер');
+  } else {
+    // Ты на этапе 3 — указываем кто вёл этапы 1 и 2
+    show(m1, 'Этап 1 — менеджер');
+    show(m2, 'Этап 2 — менеджер');
+    hide(m3);
+  }
 }
 
 // AUTOCOMPLETE
@@ -1476,6 +1648,8 @@ function showTab(name) {
 function addClient() {
   const name = document.getElementById('f-name').value.trim();
   if (!name) { showToast('Введите ФИО', 'error'); return; }
+  const dealTotalRaw = document.getElementById('f-deal-total').value.replace(/\s/g, '').replace(',', '.');
+  const dealTotal = parseFloat(dealTotalRaw) || 0;
   clients.unshift({
     id: Date.now(),
     createdAt: Date.now(),
@@ -1484,16 +1658,22 @@ function addClient() {
     region: document.getElementById('f-region').value.trim(),
     m1: document.getElementById('f-m1').value.trim(),
     m2: document.getElementById('f-m2').value.trim(),
+    m3: document.getElementById('f-m3').value.trim(),
     comment: document.getElementById('f-comment').value.trim(),
     status: selectedStatus,
+    entryStage: selectedStage,
+    dealTotal,
     payments: [],
     cbPayments: []
   });
   save();
   haptic('medium');
-  ['f-name','f-phone','f-region','f-m1','f-m2','f-comment'].forEach(id => document.getElementById(id).value = '');
+  ['f-name','f-phone','f-region','f-m1','f-m2','f-m3','f-comment','f-deal-total'].forEach(id => document.getElementById(id).value = '');
   selectedStatus = 'work';
-  document.querySelectorAll('.status-opt').forEach(b => b.classList.toggle('active', b.dataset.status === 'work'));
+  selectedStage = 1;
+  document.querySelectorAll('#status-picker .status-opt').forEach(b => b.classList.toggle('active', b.dataset.status === 'work'));
+  document.querySelectorAll('#stage-picker .status-opt').forEach(b => b.classList.toggle('active', b.dataset.stage === '1'));
+  updateManagerFields();
   updateTabCounter();
   showTab('clients');
 }
@@ -1572,6 +1752,12 @@ function savePayment() {
     date: new Date().toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'2-digit'})
   });
   save(); haptic('light'); closeModal(); renderClients();
+
+  if (client.dealTotal > 0) {
+    const newTotal = totalPayments(client);
+    const pct = Math.min(100, Math.round((newTotal / client.dealTotal) * 100));
+    showToast(`Платёж добавлен · собрано ${pct}% от суммы сделки`, 'success');
+  }
 }
 
 function deletePayment(clientId, paymentId, type) {
@@ -1586,6 +1772,15 @@ function totalPayments(client) {
   const a = (client.payments || []).reduce((a, p) => a + p.sum, 0);
   const b = (client.cbPayments || []).reduce((a, p) => a + p.sum, 0);
   return a + b;
+}
+
+// Для расчёта ЗП: если клиент внесён с этапа 1 или 2, его сумма платежей
+// учитывается с коэффициентом 0.5. Этап 3 (или клиенты без entryStage —
+// старые записи) считаются полностью.
+function salaryWeightedPayments(client) {
+  const total = totalPayments(client);
+  const stage = client.entryStage || 3;
+  return stage === 3 ? total : total * 0.5;
 }
 
 let expandedWeeks = new Set(); // week group keys that are expanded (current week pre-expanded via 'current')
@@ -1625,6 +1820,28 @@ function toggleWeekGroup(key) {
   renderClients();
 }
 
+function dealProgressHtml(c, total) {
+  const pct = Math.min(100, Math.round((total / c.dealTotal) * 100));
+  const remaining = Math.max(0, c.dealTotal - total);
+  const over = total > c.dealTotal;
+  return `
+    <div class="deal-progress">
+      <div class="dp-top">
+        <span class="dp-label">Сумма сделки</span>
+        <span class="dp-amount">${total.toLocaleString('ru-RU')} ₽ <span class="dp-of">/ ${c.dealTotal.toLocaleString('ru-RU')} ₽</span></span>
+      </div>
+      <div class="dp-bar-track">
+        <div class="dp-bar ${over ? 'dp-bar-over' : ''}" style="width:${Math.min(100, pct)}%"></div>
+      </div>
+      <div class="dp-bottom">
+        <span class="dp-pct ${over ? 'dp-pct-over' : ''}">${pct}% собрано</span>
+        ${!over && remaining > 0 ? `<span class="dp-remaining">осталось ${remaining.toLocaleString('ru-RU')} ₽</span>` : ''}
+        ${over ? `<span class="dp-remaining">переплата ${(total - c.dealTotal).toLocaleString('ru-RU')} ₽</span>` : ''}
+      </div>
+    </div>
+  `;
+}
+
 function clientCardHtml(c, globalIdx) {
   const total = totalPayments(c);
   const payments = c.payments || [];
@@ -1639,7 +1856,7 @@ function clientCardHtml(c, globalIdx) {
           <div class="client-top-left">
             <div class="client-num">CLIENT · #${String(clients.length - globalIdx).padStart(3,'0')}</div>
             <div class="client-name">${c.name}</div>
-            ${!isOpen ? `<div style="display:flex;align-items:center;gap:6px;margin-top:4px"><span class="status-badge ${status.cls}">${status.label}</span>${total > 0 ? `<span style="font-size:12px;color:var(--green);font-weight:600">${total.toLocaleString('ru-RU')} ₽</span>` : ''}</div>` : ''}
+            ${!isOpen ? `<div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap"><span class="status-badge ${status.cls}">${status.label}</span><span class="stage-badge">Этап ${c.entryStage || 3}</span>${total > 0 ? `<span style="font-size:12px;color:var(--green);font-weight:600">${total.toLocaleString('ru-RU')} ₽${c.dealTotal > 0 ? ` <span style="color:var(--text2);font-weight:600">(${Math.min(100, Math.round((total / c.dealTotal) * 100))}%)</span>` : ''}</span>` : ''}</div>` : ''}
           </div>
           <div class="client-top-right">
             <div class="chevron ${isOpen ? 'open' : ''}">
@@ -1661,14 +1878,17 @@ function clientCardHtml(c, globalIdx) {
             ${c.region ? `<div class="meta-item"><span class="meta-icon">${ICON_PIN}</span>${c.region}</div>` : ''}
           </div>` : ''}
 
-          ${(c.m1 || c.m2) ? `
+          ${(c.m1 || c.m2 || c.m3) ? `
           <div class="badges">
             ${c.m1 ? `<span class="badge b1">Этап 1 · ${c.m1}</span>` : ''}
             ${c.m2 ? `<span class="badge b2">Этап 2 · ${c.m2}</span>` : ''}
+            ${c.m3 ? `<span class="badge b3">Этап 3 · ${c.m3}</span>` : ''}
           </div>` : ''}
 
           ${c.comment ? `<div class="comment-box">${c.comment}</div>` : ''}
-          ${dateStr ? `<div class="client-date">Добавлен: ${dateStr}</div>` : ''}
+          ${dateStr ? `<div class="client-date">Добавлен: ${dateStr} · Этап ${c.entryStage || 3}${(c.entryStage && c.entryStage !== 3) ? ' (ЗП ×0.5)' : ''}</div>` : ''}
+
+          ${c.dealTotal > 0 ? dealProgressHtml(c, total) : ''}
 
           <div class="payments-block">
             <div class="payments-head">
@@ -1792,12 +2012,13 @@ function startNewWeek() {
     // Save current week to history
     const weekClients = clients.filter(c => (c.createdAt || 0) >= weekStart);
     const weekSum = weekClients.reduce((a, c) => a + totalPayments(c), 0);
+    const weekWeightedSum = weekClients.reduce((a, c) => a + salaryWeightedPayments(c), 0);
     const startD = new Date(weekStart);
     const endTs = Date.now();
     const endD = new Date(endTs);
     const fmt = d => d.toLocaleDateString('ru-RU', {day:'2-digit', month:'2-digit'});
 
-    const weekSalary = Math.round((weekSum / 100000) * conversionRate);
+    const weekSalary = Math.round((weekWeightedSum / 100000) * conversionRate);
     weekHistory.unshift({
       period: `${fmt(startD)} — ${fmt(endD)}`,
       startTs: weekStart,
@@ -1818,13 +2039,51 @@ function startNewWeek() {
   }, 'Начать новую неделю?');
 }
 
-function countInRange(fromTs) {
-  const inRange = clients.filter(c => (c.createdAt || 0) >= fromTs);
+function countInRange(fromTs, toTs) {
+  const to = toTs != null ? toTs : Infinity;
+  const inRange = clients.filter(c => (c.createdAt || 0) >= fromTs && (c.createdAt || 0) < to);
   return {
     total: inRange.length,
     m1: inRange.filter(c => c.m1).length,
     m2: inRange.filter(c => c.m2).length
   };
+}
+
+function statusBreakdown(fromTs, toTs) {
+  const to = toTs != null ? toTs : Infinity;
+  const inRange = clients.filter(c => (c.createdAt || 0) >= fromTs && (c.createdAt || 0) < to);
+  const total = inRange.length;
+  const counts = { work: 0, done: 0, fail: 0 };
+  inRange.forEach(c => { counts[c.status || 'work']++; });
+  const pct = n => total ? Math.round((n / total) * 100) : 0;
+  return {
+    total,
+    work: counts.work, workPct: pct(counts.work),
+    done: counts.done, donePct: pct(counts.done),
+    fail: counts.fail, failPct: pct(counts.fail)
+  };
+}
+
+function statusBreakdownHtml(bd) {
+  return `
+    <div class="status-breakdown">
+      <div class="sbd-row">
+        <div class="sbd-label"><span class="status-opt-dot dot-work"></span>В работе</div>
+        <div class="sbd-bar-track"><div class="sbd-bar sbd-bar-work" style="width:${bd.workPct}%"></div></div>
+        <div class="sbd-val">${bd.work} <span class="sbd-pct">(${bd.workPct}%)</span></div>
+      </div>
+      <div class="sbd-row">
+        <div class="sbd-label"><span class="status-opt-dot dot-done"></span>Закрыт</div>
+        <div class="sbd-bar-track"><div class="sbd-bar sbd-bar-done" style="width:${bd.donePct}%"></div></div>
+        <div class="sbd-val">${bd.done} <span class="sbd-pct">(${bd.donePct}%)</span></div>
+      </div>
+      <div class="sbd-row">
+        <div class="sbd-label"><span class="status-opt-dot dot-fail"></span>Срез</div>
+        <div class="sbd-bar-track"><div class="sbd-bar sbd-bar-fail" style="width:${bd.failPct}%"></div></div>
+        <div class="sbd-val">${bd.fail} <span class="sbd-pct">(${bd.failPct}%)</span></div>
+      </div>
+    </div>
+  `;
 }
 
 function renderStatGroup(elId, data, periodLabel) {
@@ -1852,6 +2111,21 @@ function renderStats() {
   renderStatGroup('stats-week', countInRange(weekStart), 'за неделю');
   renderStatGroup('stats-month', countInRange(monthStart.getTime()), 'за месяц');
   renderStatGroup('stats-total', countInRange(0), 'всего');
+
+  const weekBd = document.getElementById('stats-week-breakdown');
+  if (weekBd) weekBd.innerHTML = statusBreakdownHtml(statusBreakdown(weekStart));
+
+  const totalBd = document.getElementById('stats-total-breakdown');
+  if (totalBd) totalBd.innerHTML = statusBreakdownHtml(statusBreakdown(0));
+
+  renderWeekHistory();
+}
+
+let expandedHistoryWeeks = new Set();
+
+function toggleHistoryWeek(idx) {
+  if (expandedHistoryWeeks.has(idx)) expandedHistoryWeeks.delete(idx);
+  else expandedHistoryWeeks.add(idx);
   renderWeekHistory();
 }
 
@@ -1862,10 +2136,12 @@ function renderWeekHistory() {
     el.innerHTML = '<div class="empty-history">История недель пока пуста</div>';
     return;
   }
-  el.innerHTML = weekHistory.map(w => {
+  el.innerHTML = weekHistory.map((w, idx) => {
     const wSalary = (w.salary != null) ? w.salary : Math.round((w.sum / 100000) * conversionRate);
+    const isOpen = expandedHistoryWeeks.has(idx);
+    const bd = (w.startTs != null) ? statusBreakdown(w.startTs, w.endTs) : null;
     return `
-    <div class="week-history-item">
+    <div class="week-history-item ${isOpen ? 'is-open' : ''}" onclick="toggleHistoryWeek(${idx})" style="cursor:pointer">
       <div class="wh-left">
         <div class="wh-period">${w.period}</div>
         <div class="wh-clients">${w.clientCount} ${w.clientCount === 1 ? 'клиент' : w.clientCount < 5 ? 'клиента' : 'клиентов'}</div>
@@ -1875,6 +2151,7 @@ function renderWeekHistory() {
         <div class="wh-salary">${wSalary.toLocaleString('ru-RU')} ₴</div>
       </div>
     </div>
+    ${isOpen && bd ? `<div class="wh-breakdown-wrap">${statusBreakdownHtml(bd)}</div>` : ''}
   `;
   }).join('');
 }
@@ -1919,7 +2196,8 @@ async function calcSalary() {
   const rate = conversionRate;
   const weekClients = clients.filter(c => (c.createdAt || 0) >= weekStart);
   const totalSum = weekClients.reduce((a,c) => a + totalPayments(c), 0);
-  const salary = Math.round((totalSum / 100000) * rate);
+  const weightedSum = weekClients.reduce((a,c) => a + salaryWeightedPayments(c), 0);
+  const salary = Math.round((weightedSum / 100000) * rate);
   // прошлые недели считаются по курсу, который был актуален на момент их закрытия
   const allTimeSalary = weekHistory.reduce((a, w) =>
     a + (w.salary != null ? w.salary : Math.round((w.sum / 100000) * rate)), 0) + salary;
