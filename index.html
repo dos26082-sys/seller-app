@@ -479,6 +479,17 @@ body > * { position: relative; z-index: 1; }
 }
 .bsm-red:active { box-shadow: 0 1px 0 rgba(150,30,40,0.5), 0 2px 6px rgba(255,71,87,0.15), 0 1px 0 rgba(255,255,255,0.1) inset; }
 
+.bsm-edit {
+  background: linear-gradient(180deg, rgba(220,170,30,0.24), rgba(220,170,30,0.1));
+  color: #fff4cc; border-color: rgba(220,170,30,0.55);
+  box-shadow:
+    0 3px 0 rgba(100,70,5,0.5),
+    0 5px 12px rgba(220,170,30,0.18),
+    0 1px 0 rgba(255,255,255,0.25) inset;
+  text-shadow: 0 0 8px rgba(220,170,30,0.6);
+}
+.bsm-edit:active { box-shadow: 0 1px 0 rgba(100,70,5,0.5), 0 2px 6px rgba(220,170,30,0.12), 0 1px 0 rgba(255,255,255,0.1) inset; }
+
 .bsm-green {
   background: linear-gradient(180deg, rgba(0,255,159,0.24), rgba(0,255,159,0.1));
   color: #c8ffe6; border-color: rgba(0,255,159,0.5);
@@ -550,6 +561,56 @@ body > * { position: relative; z-index: 1; }
   font-family: 'Exo 2', sans-serif; font-size: 14px; color: #fff;
 }
 .search-bar input::placeholder { color: var(--text3); }
+
+/* SALARY FORECAST */
+.salary-forecast-card {
+  background: linear-gradient(160deg, rgba(22,17,4,0.96), rgba(10,8,1,0.98));
+  border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px;
+  position: relative; overflow: hidden; margin-bottom: 4px;
+  box-shadow: 0 4px 20px rgba(160,110,10,0.14), 0 1px 0 rgba(220,180,80,0.06) inset;
+}
+.sf-row { display: flex; justify-content: space-between; align-items: flex-start; }
+.sf-label { font-family: 'Share Tech Mono', monospace; font-size: 10px; color: var(--text2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.sf-val { font-family: 'Share Tech Mono', monospace; font-size: 26px; font-weight: 700; color: #fff; text-shadow: 0 0 16px rgba(220,170,30,0.4); }
+.sf-cur { font-size: 16px; color: var(--c); }
+.sf-badge { background: rgba(220,170,30,0.12); border: 1px solid rgba(220,170,30,0.28); border-radius: 20px; padding: 4px 11px; font-family: 'Share Tech Mono', monospace; font-size: 11px; color: var(--text2); }
+
+/* SALARY HISTORY */
+.salary-history-list {
+  background: linear-gradient(160deg, rgba(22,17,4,0.96), rgba(10,8,1,0.98));
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  box-shadow: 0 4px 20px rgba(160,110,10,0.14);
+}
+.sh-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 16px; border-bottom: 1px solid var(--border2);
+}
+.sh-row:last-child { border-bottom: none; }
+.sh-period { font-family: 'Share Tech Mono', monospace; font-size: 12px; color: var(--text2); font-weight: 600; }
+.sh-right { display: flex; align-items: center; gap: 12px; }
+.sh-clients { font-family: 'Exo 2', sans-serif; font-size: 11px; color: var(--text3); }
+.sh-salary { font-family: 'Share Tech Mono', monospace; font-size: 14px; font-weight: 700; color: var(--c); text-shadow: 0 0 8px rgba(220,170,30,0.35); }
+
+/* FILTER BAR */
+.filter-bar {
+  display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.filter-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 13px; border-radius: 20px;
+  font-family: 'Exo 2', sans-serif; font-size: 12px; font-weight: 700;
+  cursor: pointer; border: 1px solid rgba(200,160,40,0.28);
+  background: linear-gradient(160deg, rgba(30,23,4,0.95), rgba(12,9,1,0.97));
+  color: var(--text2); transition: all 0.12s ease;
+  box-shadow: 0 3px 0 rgba(60,40,5,0.5), 0 5px 12px rgba(0,0,0,0.3), 0 1px 0 rgba(220,180,80,0.12) inset;
+}
+.filter-btn:active { transform: translateY(2px); }
+.filter-btn.active {
+  border-color: rgba(220,170,30,0.6); color: #fff4cc;
+  background: linear-gradient(160deg, rgba(220,170,30,0.22), rgba(140,100,10,0.1));
+  box-shadow: 0 3px 0 rgba(100,70,5,0.5), 0 6px 14px rgba(220,170,30,0.18), 0 1px 0 rgba(255,255,255,0.25) inset;
+  text-shadow: 0 0 8px rgba(220,170,30,0.6);
+}
 
 /* STATUS PICKER */
 .status-picker { display: flex; gap: 8px; }
@@ -1223,6 +1284,13 @@ body > * { position: relative; z-index: 1; }
     <span class="search-icon"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
     <input type="text" id="search-input" placeholder="Поиск по имени или телефону..." oninput="renderClients()">
   </div>
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">Все</button>
+    <button class="filter-btn" data-filter="work" onclick="setFilter('work')"><span class="status-opt-dot dot-work" style="width:7px;height:7px"></span>В работе</button>
+    <button class="filter-btn" data-filter="done" onclick="setFilter('done')"><span class="status-opt-dot dot-done" style="width:7px;height:7px"></span>Закрыт</button>
+    <button class="filter-btn" data-filter="fail" onclick="setFilter('fail')"><span class="status-opt-dot dot-fail" style="width:7px;height:7px"></span>Срез</button>
+    <button class="filter-btn" id="sort-btn" onclick="cycleSort()" style="margin-left:auto" title="Сортировка">⇅ <span id="sort-label">Дата</span></button>
+  </div>
   <div id="clients-list"></div>
 </div>
 
@@ -1325,6 +1393,8 @@ body > * { position: relative; z-index: 1; }
     <span class="hud-corner tl"></span><span class="hud-corner br"></span>
     <div class="card-body" id="salary-result"></div>
   </div>
+  <div id="salary-forecast-block"></div>
+  <div id="salary-history-block"></div>
 </div>
 
 <div class="modal-overlay" id="payment-modal">
@@ -1369,6 +1439,82 @@ body > * { position: relative; z-index: 1; }
     <div class="btn-row">
       <button class="btn btn-green-solid" id="confirm-modal-yes">Подтвердить</button>
       <button class="btn btn-muted" onclick="closeConfirmModal()">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="export-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Экспорт и резервная копия</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px">
+      <button class="btn btn-primary" onclick="exportCSV()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
+        Экспорт в CSV (Excel)
+      </button>
+      <button class="btn btn-green-solid" onclick="exportJSON()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
+        Сохранить резервную копию (JSON)
+      </button>
+      <button class="btn btn-muted" onclick="importJSON()">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><path d="M12 21V9"/><path d="M7 14l5-5 5 5"/><path d="M4 5h16"/></svg>
+        Восстановить из резервной копии
+      </button>
+    </div>
+    <button class="btn btn-muted" onclick="closeExportModal()">Отмена</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal" style="max-height:85vh;overflow-y:auto">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Редактировать клиента</div>
+
+    <div class="form-group">
+      <label>ФИО / Название</label>
+      <input type="text" id="em-name" placeholder="Фамилия Имя Отчество" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Телефон</label>
+      <input type="text" id="em-phone" placeholder="+7 000 000-00-00" inputmode="tel">
+    </div>
+    <div class="form-group">
+      <label>Регион</label>
+      <input type="text" id="em-region" placeholder="Город или регион" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Общая сумма сделки (₽)</label>
+      <input type="text" id="em-deal-total" placeholder="Например, 50000" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label>Внесён с этапа</label>
+      <div class="status-picker" id="em-stage-picker">
+        <button type="button" class="status-opt" data-stage="1" onclick="emPickStage(this)">Этап 1</button>
+        <button type="button" class="status-opt" data-stage="2" onclick="emPickStage(this)">Этап 2</button>
+        <button type="button" class="status-opt" data-stage="3" onclick="emPickStage(this)">Этап 3</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group" id="em-wrap-m1">
+        <label id="em-label-m1">Этап 1 — менеджер</label>
+        <input type="text" id="em-m1" placeholder="Имя" autocomplete="off">
+      </div>
+      <div class="form-group" id="em-wrap-m2">
+        <label id="em-label-m2">Этап 2 — менеджер</label>
+        <input type="text" id="em-m2" placeholder="Имя" autocomplete="off">
+      </div>
+      <div class="form-group" id="em-wrap-m3">
+        <label id="em-label-m3">Этап 3 — менеджер</label>
+        <input type="text" id="em-m3" placeholder="Имя" autocomplete="off">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Комментарий</label>
+      <textarea id="em-comment" placeholder="Детали сделки..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveEdit()">Сохранить</button>
+      <button class="btn btn-muted" onclick="closeEditModal()">Отмена</button>
     </div>
   </div>
 </div>
@@ -1499,6 +1645,29 @@ async function initApp() {
 let activePaymentClientId = null;
 let expandedCards = new Set();
 let selectedStatus = 'work';
+let activeFilter = 'all';
+let activeSort = 'date'; // date | sum | status
+const SORT_CYCLE = ['date','sum','status'];
+const SORT_LABELS = { date:'Дата', sum:'Сумма', status:'Статус' };
+
+function cycleSort() {
+  const idx = SORT_CYCLE.indexOf(activeSort);
+  activeSort = SORT_CYCLE[(idx + 1) % SORT_CYCLE.length];
+  document.getElementById('sort-label').textContent = SORT_LABELS[activeSort];
+  haptic('light');
+  renderClients();
+}
+
+function applySortToFiltered(arr) {
+  const copy = [...arr];
+  if (activeSort === 'date') return copy; // already newest-first from clients array
+  if (activeSort === 'sum') return copy.sort((a,b) => totalPayments(b) - totalPayments(a));
+  if (activeSort === 'status') {
+    const order = { work:0, done:1, fail:2 };
+    return copy.sort((a,b) => (order[a.status||'work']) - (order[b.status||'work']));
+  }
+  return copy;
+}
 let selectedStage = 1;
 
 // STATUS
@@ -1512,6 +1681,12 @@ function pickStatus(btn) {
   document.querySelectorAll('#status-picker .status-opt').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedStatus = btn.dataset.status;
+}
+
+function setFilter(f) {
+  activeFilter = f;
+  document.querySelectorAll('#filter-bar .filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+  renderClients();
 }
 
 function pickStage(btn) {
@@ -1596,15 +1771,85 @@ function haptic(style) {
 
 // EXPORT
 function exportData() {
+  // Show export options via confirm-style - use toast + two buttons via a quick modal
+  showExportModal();
+}
+
+function showExportModal() {
+  document.getElementById('export-modal').classList.add('open');
+}
+function closeExportModal() {
+  document.getElementById('export-modal').classList.remove('open');
+}
+
+function exportJSON() {
   const data = { clients, weekStart, conversionRate, weekHistory, exportedAt: new Date().toISOString() };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'crm-backup-' + new Date().toLocaleDateString('ru-RU').replace(/\./g,'-') + '.json';
+  a.download = 'skoll-backup-' + new Date().toLocaleDateString('ru-RU').replace(/\./g,'-') + '.json';
   a.click();
   URL.revokeObjectURL(url);
-  haptic('medium');
+  haptic('medium'); closeExportModal();
+  showToast('Резервная копия сохранена');
+}
+
+function exportCSV() {
+  const rows = [['Имя','Телефон','Регион','Статус','Этап','Этап1','Этап2','Этап3','Сумма сделки','Итого платежей','Дата добавления','Комментарий']];
+  clients.forEach(c => {
+    rows.push([
+      c.name, c.phone||'', c.region||'',
+      STATUS_MAP[c.status||'work'].label,
+      c.entryStage||3, c.m1||'', c.m2||'', c.m3||'',
+      c.dealTotal||'', totalPayments(c),
+      c.createdAt ? new Date(c.createdAt).toLocaleDateString('ru-RU') : '',
+      (c.comment||'').replace(/\n/g,' ')
+    ]);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'skoll-clients-' + new Date().toLocaleDateString('ru-RU').replace(/\./g,'-') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  haptic('medium'); closeExportModal();
+  showToast('CSV экспортирован');
+}
+
+function importJSON() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (!data.clients) throw new Error('Неверный формат');
+        showConfirm('Текущие данные будут заменены данными из файла. Это действие нельзя отменить.', () => {
+          clients = data.clients || [];
+          weekStart = data.weekStart || Date.now();
+          conversionRate = data.conversionRate || 2850;
+          weekHistory = data.weekHistory || [];
+          save();
+          csSet('crm_week_start', String(weekStart));
+          csSet('crm_conversion_rate', String(conversionRate));
+          csSet('crm_week_history', JSON.stringify(weekHistory));
+          updateTabCounter(); renderClients(); renderStats(); calcSalary();
+          showToast('Данные восстановлены из резервной копии');
+          closeExportModal();
+        }, 'Восстановить из резервной копии?');
+      } catch(err) {
+        showToast('Ошибка: неверный формат файла', 'error');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 }
 
 function toggleCard(id) {
@@ -1684,6 +1929,83 @@ function deleteClient(id) {
     expandedCards.delete(id);
     save(); updateTabCounter(); renderClients();
   }, 'Удалить клиента?');
+}
+
+// ── EDIT CLIENT ──────────────────────────────────────────────────
+let editClientId = null;
+let emStage = 1;
+
+function openEditModal(id) {
+  const c = clients.find(x => x.id === id);
+  if (!c) return;
+  editClientId = id;
+  emStage = c.entryStage || 3;
+
+  document.getElementById('em-name').value = c.name || '';
+  document.getElementById('em-phone').value = c.phone || '';
+  document.getElementById('em-region').value = c.region || '';
+  document.getElementById('em-deal-total').value = c.dealTotal > 0 ? c.dealTotal : '';
+  document.getElementById('em-m1').value = c.m1 || '';
+  document.getElementById('em-m2').value = c.m2 || '';
+  document.getElementById('em-m3').value = c.m3 || '';
+  document.getElementById('em-comment').value = c.comment || '';
+
+  // Set stage picker active button
+  document.querySelectorAll('#em-stage-picker .status-opt').forEach(b =>
+    b.classList.toggle('active', parseInt(b.dataset.stage) === emStage)
+  );
+
+  updateEmStageFields();
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeEditModal() {
+  document.getElementById('edit-modal').classList.remove('open');
+  editClientId = null;
+}
+
+function emPickStage(btn) {
+  document.querySelectorAll('#em-stage-picker .status-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  emStage = parseInt(btn.dataset.stage);
+  updateEmStageFields();
+}
+
+function updateEmStageFields() {
+  const m1 = document.getElementById('em-wrap-m1');
+  const m2 = document.getElementById('em-wrap-m2');
+  const m3 = document.getElementById('em-wrap-m3');
+  const show = (el) => { el.style.display = ''; };
+  const hide = (el) => { el.style.display = 'none'; };
+
+  if (emStage === 1) {
+    hide(m1); show(m2); show(m3);
+  } else if (emStage === 2) {
+    show(m1); hide(m2); show(m3);
+  } else {
+    show(m1); show(m2); hide(m3);
+  }
+}
+
+function saveEdit() {
+  const c = clients.find(x => x.id === editClientId);
+  if (!c) return;
+  const name = document.getElementById('em-name').value.trim();
+  if (!name) { showToast('Введите ФИО', 'error'); return; }
+
+  const dealTotalRaw = document.getElementById('em-deal-total').value.replace(/\s/g, '').replace(',', '.');
+  c.name = name;
+  c.phone = document.getElementById('em-phone').value.trim();
+  c.region = document.getElementById('em-region').value.trim();
+  c.dealTotal = parseFloat(dealTotalRaw) || 0;
+  c.entryStage = emStage;
+  c.m1 = document.getElementById('em-m1').value.trim();
+  c.m2 = document.getElementById('em-m2').value.trim();
+  c.m3 = document.getElementById('em-m3').value.trim();
+  c.comment = document.getElementById('em-comment').value.trim();
+
+  save(); haptic('medium'); closeEditModal(); renderClients();
+  showToast('Данные клиента обновлены');
 }
 
 function changeStatus(id, newStatus) {
@@ -1936,7 +2258,8 @@ function clientCardHtml(c, globalIdx) {
             </div>
           </div>
 
-          <div style="padding: 0 14px 12px 16px;">
+          <div style="padding: 0 14px 12px 16px; display:flex; gap:8px;">
+            <button class="btn-sm bsm-edit" onclick="event.stopPropagation(); openEditModal(${c.id})">✎ Редактировать</button>
             <button class="btn-sm bsm-red" onclick="event.stopPropagation(); deleteClient(${c.id})">✕ Удалить клиента</button>
           </div>
         </div>
@@ -1985,6 +2308,10 @@ function renderClients() {
       (c.region || '').toLowerCase().includes(query)
     );
   }
+  if (activeFilter !== 'all') {
+    filtered = filtered.filter(c => (c.status || 'work') === activeFilter);
+  }
+  filtered = applySortToFiltered(filtered);
   if (!filtered.length) {
     el.innerHTML = query
       ? `<div class="empty"><div class="empty-icon">${ICON_NO_RESULT}</div><div class="empty-t">Ничего не найдено</div><div class="empty-s">Попробуйте другой запрос</div></div>`
@@ -2262,10 +2589,72 @@ async function calcSalary() {
       </div>
     </div>
   `;
+
+  // Прогноз зарплаты
+  renderSalaryForecast(salary, rate, weekStart);
+
+  // История зарплат
+  renderSalaryHistory(rate);
+}
+
+function renderSalaryForecast(currentSalary, rate, weekStartTs) {
+  const el = document.getElementById('salary-forecast-block');
+  if (!el) return;
+  const now = Date.now();
+  const elapsed = now - weekStartTs;
+  const sevenDays = 7 * 24 * 60 * 60 * 1000;
+  const progress = Math.min(1, elapsed / sevenDays);
+  if (progress < 0.05 || currentSalary === 0) { el.innerHTML = ''; return; }
+  const forecast = Math.round(currentSalary / progress);
+  const daysLeft = Math.max(0, Math.ceil((sevenDays - elapsed) / (24 * 60 * 60 * 1000)));
+  const pct = Math.round(progress * 100);
+  el.innerHTML = `
+    <div class="card-label" style="margin:14px 0 8px;padding-left:2px">Прогноз</div>
+    <div class="salary-forecast-card">
+      <span class="hud-corner tl"></span><span class="hud-corner br"></span>
+      <div class="sf-row">
+        <div>
+          <div class="sf-label">При текущем темпе за неделю</div>
+          <div class="sf-val">${forecast.toLocaleString('ru-RU')} <span class="sf-cur">₴</span></div>
+        </div>
+        <div class="sf-badge">${daysLeft > 0 ? `ещё ${daysLeft} дн.` : 'сегодня'}</div>
+      </div>
+      <div class="dp-bar-track" style="margin-top:10px">
+        <div class="dp-bar" style="width:${pct}%;background:linear-gradient(90deg,rgba(220,170,30,0.4),var(--c))"></div>
+      </div>
+      <div style="font-size:10px;color:var(--text2);margin-top:5px;font-family:'Share Tech Mono',monospace">${pct}% недели пройдено</div>
+    </div>
+  `;
+}
+
+function renderSalaryHistory(rate) {
+  const el = document.getElementById('salary-history-block');
+  if (!el || !weekHistory.length) { if(el) el.innerHTML = ''; return; }
+  const rows = weekHistory.map(w => {
+    const s = w.salary != null ? w.salary : Math.round((w.sum / 100000) * rate);
+    return `
+      <div class="sh-row">
+        <div class="sh-period">${w.period}</div>
+        <div class="sh-right">
+          <span class="sh-clients">${w.clientCount} кл.</span>
+          <span class="sh-salary">${s.toLocaleString('ru-RU')} ₴</span>
+        </div>
+      </div>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="card-label" style="margin:14px 0 8px;padding-left:2px">История зарплат</div>
+    <div class="salary-history-list">${rows}</div>
+  `;
 }
 
 document.getElementById('payment-modal').addEventListener('click', function(e) {
   if(e.target === this) closeModal();
+});
+document.getElementById('export-modal').addEventListener('click', function(e) {
+  if(e.target === this) closeExportModal();
+});
+document.getElementById('edit-modal').addEventListener('click', function(e) {
+  if(e.target === this) closeEditModal();
 });
 
 document.getElementById('rate-modal').addEventListener('click', function(e) {
